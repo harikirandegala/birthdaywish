@@ -61,6 +61,7 @@
     html {
       scroll-behavior: smooth;
       font-size: 16px;
+      height: 100%;
     }
 
     body {
@@ -69,6 +70,8 @@
       color: var(--text-primary);
       overflow-x: hidden;
       min-height: 100vh;
+      min-height: 100dvh;
+      width: 100%;
       line-height: 1.6;
     }
 
@@ -185,14 +188,6 @@
         opacity: 0;
       }
 
-      10% {
-        opacity: 0.25;
-      }
-
-      90% {
-        opacity: 0.15;
-      }
-
       100% {
         transform: translateY(-10vh) rotate(360deg) scale(1.2);
         opacity: 0;
@@ -204,13 +199,19 @@
    ========================================================================== */
     .screen {
       position: fixed;
-      inset: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
       z-index: 10;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 2rem;
+      justify-content: flex-start;
+      padding: max(1.5rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1.5rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.8s ease, visibility 0.8s ease, transform 0.8s ease;
@@ -218,6 +219,7 @@
       overflow-x: hidden;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
       scrollbar-width: none;
       /* Firefox */
       -ms-overflow-style: none;
@@ -249,12 +251,14 @@
       -webkit-backdrop-filter: blur(var(--glass-blur));
       border: 1px solid var(--glass-border);
       border-radius: var(--radius);
-      padding: 2.5rem 2rem;
+      padding: 2rem 1.75rem;
       max-width: 540px;
       width: 100%;
       text-align: center;
       position: relative;
       overflow: hidden;
+      margin: auto 0;
+      flex-shrink: 0;
       box-shadow:
         0 8px 32px rgba(0, 0, 0, 0.4),
         inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -411,7 +415,7 @@
    HEADINGS & TEXT
    ========================================================================== */
     .heading-glow {
-      font-size: clamp(1.5rem, 5vw, 2.5rem);
+      font-size: clamp(1.4rem, 5vw, 2.5rem);
       font-weight: 700;
       background: linear-gradient(135deg, var(--cyan), var(--soft-pink));
       -webkit-background-clip: text;
@@ -419,7 +423,9 @@
       background-clip: text;
       filter: drop-shadow(0 0 20px rgba(0, 229, 255, 0.3));
       margin-bottom: 0.5rem;
-      line-height: 1.3;
+      line-height: 1.25;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     .subtitle {
@@ -435,7 +441,9 @@
       font-weight: 600;
       color: var(--text-primary);
       margin-bottom: 1.5rem;
-      line-height: 1.4;
+      line-height: 1.35;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     .error-label {
@@ -447,6 +455,7 @@
       transition: opacity 0.4s ease;
       margin-top: 0.5rem;
       min-height: 1.2em;
+      word-break: break-word;
     }
 
     .error-label.visible {
@@ -485,7 +494,7 @@
       justify-content: center;
       flex-wrap: wrap;
       margin-top: 1.5rem;
-      min-height: 60px;
+      min-height: 54px;
       position: relative;
     }
 
@@ -541,8 +550,8 @@
 
     /* The dodging No button when repositioned */
     .btn-no.dodging {
-      position: absolute;
-      z-index: 100;
+      position: fixed;
+      z-index: 9999;
       animation: dodgePop 0.3s ease;
     }
 
@@ -633,6 +642,7 @@
       flex-direction: column;
       align-items: center;
       gap: 2px;
+      min-width: 0;
     }
 
     .vital-value {
@@ -698,8 +708,18 @@
     /* ==========================================================================
    FINAL REVEAL SCREEN
    ========================================================================== */
+    .reveal-container {
+      text-align: center;
+      max-width: 560px;
+      width: 100%;
+      position: relative;
+      padding: 1rem 0 2rem 0;
+      margin: auto 0;
+      flex-shrink: 0;
+    }
+
     .reveal-name {
-      font-size: clamp(2rem, 8vw, 4rem);
+      font-size: clamp(1.8rem, 7vw, 3.5rem);
       font-weight: 800;
       background: linear-gradient(135deg, var(--cyan), var(--soft-pink), var(--cyan));
       background-size: 200% 200%;
@@ -709,6 +729,9 @@
       animation: gradientShift 3s ease-in-out infinite;
       filter: drop-shadow(0 0 30px var(--cyan-glow));
       margin-bottom: 0.5rem;
+      line-height: 1.2;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     @keyframes gradientShift {
@@ -724,19 +747,25 @@
     }
 
     .reveal-subtitle {
-      font-size: clamp(1rem, 3vw, 1.3rem);
+      font-size: clamp(0.95rem, 3vw, 1.2rem);
       color: var(--text-secondary);
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       max-width: 500px;
-      line-height: 1.7;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     .reveal-message {
-      font-size: 1rem;
+      font-size: 0.95rem;
       color: var(--text-secondary);
       line-height: 1.8;
       max-width: 480px;
       margin: 0 auto;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     /* Star-tunnel / warp animation for transition */
@@ -826,57 +855,109 @@
    ========================================================================== */
     @media (max-width: 600px) {
       .screen {
-        padding: 1rem 0.75rem;
+        padding: max(1rem, env(safe-area-inset-top)) 0.75rem max(1.5rem, env(safe-area-inset-bottom)) 0.75rem;
       }
 
       .glass-card {
-        padding: 1.25rem 0.75rem;
-        margin: 0;
+        padding: 1.5rem 1rem;
+        margin: auto 0;
         max-width: 100%;
-        box-sizing: border-box;
-      }
-
-      .btn-group {
-        flex-direction: column;
-        align-items: center;
-        gap: 0.75rem;
-      }
-
-      .btn {
-        width: 100%;
-        max-width: 280px;
-        padding: 1rem 1.5rem;
-        font-size: 1rem;
-        min-height: 50px;
-      }
-
-      .btn-no {
-        min-height: 50px;
-        font-size: 1rem;
-        padding: 1rem 1.5rem;
-      }
-
-      .question-text {
-        font-size: clamp(1.1rem, 5vw, 1.4rem);
-        margin-bottom: 1rem;
+        border-radius: var(--radius-sm);
       }
 
       .heading-glow {
-        font-size: clamp(1.2rem, 6vw, 2rem);
+        font-size: clamp(1.25rem, 5.5vw, 1.85rem);
+        margin-bottom: 0.35rem;
       }
 
-      .vitals-bar {
+      .subtitle {
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        margin-bottom: 1rem;
+      }
+
+      .question-text {
+        font-size: clamp(1.1rem, 4.5vw, 1.35rem);
+        margin-bottom: 1rem;
+      }
+
+      .btn-group {
+        display: flex;
+        flex-direction: row;
         flex-wrap: wrap;
-        gap: 0.5rem;
-        font-size: 0.65rem;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-top: 1.25rem;
+        min-height: 48px;
+        width: 100%;
+      }
+
+      .btn {
+        flex: 1 1 120px;
+        max-width: 160px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        min-height: 46px;
+      }
+
+      .btn-no {
+        min-height: 46px;
+        font-size: 0.95rem;
+        padding: 0.75rem 1rem;
+        min-width: 90px;
+      }
+
+      .btn-scan {
+        width: 100%;
+        max-width: 280px;
+        padding: 0.85rem 1.5rem;
+        font-size: 0.95rem;
+        margin-top: 1.25rem;
+      }
+
+      #screen-q3 .btn-group {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      #screen-q3 .btn-yes.mega {
+        padding: 1.1rem 1.25rem;
+        font-size: 1.1rem;
+        width: 100%;
+        max-width: 100%;
       }
 
       .ecg-container {
-        height: 60px;
+        height: 55px;
+        margin: 1rem auto;
+      }
+
+      .ecg-spike {
+        height: 45px;
+        margin: 0.75rem auto;
+      }
+
+      .vitals-bar {
+        display: flex;
+        justify-content: space-around;
+        gap: 0.25rem;
+        padding: 0.5rem 0;
+        margin-top: 0.75rem;
+        font-size: 0.65rem;
+      }
+
+      .vital-item {
+        min-width: 0;
+        flex: 1;
+      }
+
+      .vital-value {
+        font-size: 0.9rem;
       }
 
       .error-label {
         font-size: 0.7rem;
+        margin-top: 0.4rem;
       }
 
       .console-header {
@@ -886,64 +967,54 @@
 
       .console-title {
         font-size: 0.6rem;
+        letter-spacing: 1px;
+      }
+
+      .reveal-container {
+        padding: 0.5rem 0 1.5rem 0;
       }
 
       .reveal-name {
-        font-size: clamp(1.3rem, 6vw, 2.5rem);
+        font-size: clamp(1.35rem, 6vw, 2.2rem);
+        line-height: 1.25;
+        margin-bottom: 0.35rem;
       }
 
       .reveal-subtitle {
-        font-size: clamp(0.8rem, 3vw, 1rem);
+        font-size: clamp(0.85rem, 3.2vw, 0.95rem);
         margin-bottom: 1rem;
+        line-height: 1.5;
         padding: 0 0.25rem;
       }
 
       .reveal-message {
         font-size: 0.85rem;
         line-height: 1.6;
-        padding: 0 0.25rem;
+        padding: 0;
       }
 
       .result-percent {
-        font-size: clamp(2rem, 10vw, 3.5rem);
+        font-size: clamp(2.2rem, 9vw, 3.5rem);
         margin: 0.25rem 0;
       }
 
       .scan-badge {
         font-size: 0.65rem;
         padding: 0.3rem 0.75rem;
+        margin-bottom: 0.75rem;
       }
 
       /* Dodging button on mobile stays within safe area */
       .btn-no.dodging {
-        min-width: 90px;
-        min-height: 44px;
-        font-size: 0.95rem;
-        padding: 0.75rem 1.25rem;
-      }
-
-      #screen-q3 .btn-yes.mega {
-        padding: 1.5rem 2rem;
-        font-size: 1.2rem;
-        width: 100%;
-      }
-
-      /* Reveal screen mobile fit */
-      #screen-reveal {
-        padding: 1rem 0.5rem;
-        justify-content: flex-start;
-        padding-top: 2rem;
-      }
-
-      #screen-reveal>div {
-        max-width: 100%;
-        width: 100%;
-        padding: 0;
+        min-width: 85px;
+        min-height: 42px;
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
       }
 
       #screen-reveal .glass-card {
-        margin: 1rem 0 0 0;
-        padding: 1rem 0.75rem;
+        margin-top: 1rem;
+        padding: 1.25rem 0.85rem;
       }
     }
 
@@ -1343,8 +1414,7 @@
      SCREEN 6 — FINAL REVEAL
      ====================================================================== -->
   <section class="screen" id="screen-reveal">
-    <div
-      style="text-align: center; max-width: 600px; width: 100%; position: relative; padding: 1rem 0; margin: auto 0;">
+    <div class="reveal-container">
 
       <div class="scan-badge" style="margin-bottom: 1.5rem;">
         <span class="dot" style="background: var(--soft-pink);"></span>
@@ -1489,12 +1559,10 @@
     /* Reset No buttons that may have gone out of their flow */
     function resetDodgeButtons(screenId) {
       const screen = document.getElementById(screenId);
-      if (!screen) return;
 
-      // Find all No buttons — both inside the screen and any that were moved to screen root
-      const noBtns = screen.querySelectorAll('.btn-no');
-      noBtns.forEach(btn => {
-        // Move back to original parent (btn-group) if it was moved out
+      // Find all No buttons — both inside the screen and any that were moved to body
+      const allNoBtns = document.querySelectorAll('.btn-no');
+      allNoBtns.forEach(btn => {
         if (btn._originalParent && btn.parentElement !== btn._originalParent) {
           btn._originalParent.appendChild(btn);
         }
@@ -1502,14 +1570,17 @@
         btn.style.position = '';
         btn.style.top = '';
         btn.style.left = '';
+        btn.style.zIndex = '';
         btn.style.display = '';
         // Reset dodge counts
         if (btn.id) dodgeCounts[btn.id] = 0;
       });
 
       // Also reset error labels
-      const errorLabels = screen.querySelectorAll('.error-label');
-      errorLabels.forEach(el => el.classList.remove('visible'));
+      if (screen) {
+        const errorLabels = screen.querySelectorAll('.error-label');
+        errorLabels.forEach(el => el.classList.remove('visible'));
+      }
     }
 
     /* ==========================================================================
@@ -1530,15 +1601,17 @@
         btn._originalParent = btn.parentElement;
       }
 
-      const screenEl = btn.closest('.screen') || btn._originalParent.closest('.screen');
+      const screenEl = btn.closest('.screen') || (btn._originalParent ? btn._originalParent.closest('.screen') : null);
       const errorLabel = screenEl ? screenEl.querySelector('.error-label') : null;
 
       // Make Q2 Yes button grow on each dodge
       if (id === 'no-btn-2') {
         const yesBtn = document.getElementById('yes-btn-2');
-        const scale = 1 + dodgeCounts[id] * 0.08;
-        yesBtn.style.transform = `scale(${Math.min(scale, 1.3)})`;
-        yesBtn.style.boxShadow = `0 6px ${15 + dodgeCounts[id] * 5}px var(--cyan-glow)`;
+        if (yesBtn) {
+          const scale = 1 + dodgeCounts[id] * 0.08;
+          yesBtn.style.transform = `scale(${Math.min(scale, 1.25)})`;
+          yesBtn.style.boxShadow = `0 6px ${15 + dodgeCounts[id] * 5}px var(--cyan-glow)`;
+        }
       }
 
       // After MAX_DODGES: show error, hide button
@@ -1553,37 +1626,36 @@
         return;
       }
 
-      // --- Dodge: move button out of glass-card into the screen element ---
-      // This is necessary because glass-card has backdrop-filter which creates
-      // a containing block, and overflow:hidden which clips the button
-      if (screenEl && btn.parentElement !== screenEl) {
-        screenEl.appendChild(btn);
+      // Move to document.body so backdrop-filter & overflow don't trap it
+      if (btn.parentElement !== document.body) {
+        document.body.appendChild(btn);
       }
 
-      // Calculate position relative to viewport (screen covers full viewport with inset:0)
-      const padding = 50;
-      const btnWidth = 120;
-      const btnHeight = 50;
-      const maxX = window.innerWidth - btnWidth - padding;
-      const maxY = window.innerHeight - btnHeight - padding;
+      const padding = 16;
+      const btnWidth = btn.offsetWidth || 100;
+      const btnHeight = btn.offsetHeight || 44;
+      const maxX = Math.max(padding, window.innerWidth - btnWidth - padding);
+      const maxY = Math.max(padding, window.innerHeight - btnHeight - padding);
 
       let newX, newY;
       let attempts = 0;
       const prevLeft = parseInt(btn.style.left) || 0;
       const prevTop = parseInt(btn.style.top) || 0;
       do {
-        newX = Math.max(padding, Math.random() * maxX);
-        newY = Math.max(padding, Math.random() * maxY);
+        newX = Math.floor(Math.random() * (maxX - padding + 1)) + padding;
+        newY = Math.floor(Math.random() * (maxY - padding + 1)) + padding;
         attempts++;
       } while (
         attempts < 10 &&
-        Math.abs(newX - prevLeft) < 150 &&
-        Math.abs(newY - prevTop) < 150
+        Math.abs(newX - prevLeft) < 80 &&
+        Math.abs(newY - prevTop) < 60
       );
 
       btn.classList.add('dodging');
+      btn.style.position = 'fixed';
       btn.style.left = newX + 'px';
       btn.style.top = newY + 'px';
+      btn.style.zIndex = '9999';
 
       btn.offsetHeight;
     }
