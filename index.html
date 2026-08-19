@@ -1,0 +1,1857 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Birthday Diagnostic Portal</title>
+  <meta name="description" content="A cosmic love diagnostics birthday experience — space meets heartbeat meets love.">
+
+  <style>
+    /* ==========================================================================
+   CSS VARIABLES — Color Palette & Design Tokens
+   ========================================================================== */
+    :root {
+      /* Background & Space */
+      --bg-deep: #050510;
+      --bg-navy: #0a0a2e;
+      --bg-card: rgba(15, 15, 50, 0.55);
+      --bg-card-hover: rgba(25, 25, 70, 0.65);
+
+      /* Neon Accents */
+      --cyan: #00e5ff;
+      --cyan-glow: rgba(0, 229, 255, 0.45);
+      --pink: #ff2d75;
+      --pink-glow: rgba(255, 45, 117, 0.45);
+      --soft-pink: #ff6b9d;
+      --red: #ff1744;
+      --red-glow: rgba(255, 23, 68, 0.4);
+
+      /* Nebula Gradient */
+      --nebula-1: #1a0030;
+      --nebula-2: #0d003d;
+      --nebula-3: #00091a;
+
+      /* Text */
+      --text-primary: #e8eaf6;
+      --text-secondary: #9fa8da;
+      --text-muted: #5c6bc0;
+
+      /* Glass */
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-blur: 16px;
+
+      /* Sizing */
+      --radius: 16px;
+      --radius-sm: 10px;
+      --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ==========================================================================
+   RESET & BASE
+   ========================================================================== */
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ==========================================================================
+   STARFIELD BACKGROUND — Pure CSS twinkling stars + nebula
+   ========================================================================== */
+    #starfield {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(88, 28, 135, 0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(6, 78, 128, 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 60% 80%, rgba(157, 23, 77, 0.08) 0%, transparent 50%),
+        linear-gradient(180deg, var(--bg-deep) 0%, var(--nebula-2) 50%, var(--bg-deep) 100%);
+    }
+
+    /* Star layers — generated via box-shadow for pure CSS */
+    .stars-layer {
+      position: absolute;
+      inset: 0;
+      border-radius: 0;
+    }
+
+    .stars-sm {
+      background: transparent;
+      animation: twinkle 4s ease-in-out infinite alternate;
+    }
+
+    .stars-md {
+      background: transparent;
+      animation: twinkle 6s ease-in-out infinite alternate-reverse;
+    }
+
+    .stars-lg {
+      background: transparent;
+      animation: twinkleBright 5s ease-in-out infinite alternate;
+    }
+
+    @keyframes twinkle {
+      0% {
+        opacity: 0.4;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes twinkleBright {
+      0% {
+        opacity: 0.6;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0.3;
+      }
+    }
+
+    /* Slow-drifting nebula overlay */
+    .nebula-drift {
+      position: absolute;
+      inset: -50%;
+      width: 200%;
+      height: 200%;
+      background:
+        radial-gradient(circle at 30% 40%, rgba(0, 229, 255, 0.03) 0%, transparent 40%),
+        radial-gradient(circle at 70% 60%, rgba(255, 45, 117, 0.03) 0%, transparent 40%);
+      animation: nebulaDrift 60s linear infinite;
+    }
+
+    @keyframes nebulaDrift {
+      0% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+
+      50% {
+        transform: translate(-5%, 3%) rotate(180deg);
+      }
+
+      100% {
+        transform: translate(0, 0) rotate(360deg);
+      }
+    }
+
+    /* ==========================================================================
+   FLOATING HEARTS — CSS-only ambient hearts
+   ========================================================================== */
+    .floating-hearts {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .floating-heart {
+      position: absolute;
+      color: var(--pink);
+      opacity: 0;
+      font-size: 1rem;
+      animation: floatUp linear infinite;
+      filter: drop-shadow(0 0 6px var(--pink-glow));
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(100vh) rotate(0deg) scale(0.5);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 0.25;
+      }
+
+      90% {
+        opacity: 0.15;
+      }
+
+      100% {
+        transform: translateY(-10vh) rotate(360deg) scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    /* ==========================================================================
+   SCREEN CONTAINER — Section management
+   ========================================================================== */
+    .screen {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.8s ease, visibility 0.8s ease, transform 0.8s ease;
+      transform: scale(0.95);
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      /* Firefox */
+      -ms-overflow-style: none;
+      /* IE and Edge */
+    }
+
+    .screen::-webkit-scrollbar {
+      display: none;
+      /* Chrome, Safari, Opera */
+    }
+
+    .screen.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+    }
+
+    .screen.exit {
+      opacity: 0;
+      transform: scale(1.05);
+    }
+
+    /* ==========================================================================
+   GLASSMORPHISM CARD
+   ========================================================================== */
+    .glass-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 2.5rem 2rem;
+      max-width: 540px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    /* Subtle border glow animation */
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, var(--cyan-glow), transparent 40%, var(--pink-glow));
+      z-index: -1;
+      opacity: 0.5;
+      animation: borderGlow 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes borderGlow {
+      0% {
+        opacity: 0.3;
+      }
+
+      100% {
+        opacity: 0.7;
+      }
+    }
+
+    /* Console-style top bar */
+    .console-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .console-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .console-dot.red {
+      background: #ff5f57;
+    }
+
+    .console-dot.yellow {
+      background: #ffbd2e;
+    }
+
+    .console-dot.green {
+      background: #28c840;
+    }
+
+    .console-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    /* ==========================================================================
+   ECG / HEARTBEAT LINE — SVG + CSS animation
+   ========================================================================== */
+    .ecg-container {
+      width: 100%;
+      max-width: 500px;
+      height: 80px;
+      margin: 1.5rem auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ecg-line {
+      fill: none;
+      stroke: var(--cyan);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 8px var(--cyan-glow));
+      stroke-dasharray: 1200;
+      stroke-dashoffset: 1200;
+      animation: drawECG 2.5s linear infinite;
+    }
+
+    @keyframes drawECG {
+      0% {
+        stroke-dashoffset: 1200;
+      }
+
+      45% {
+        stroke-dashoffset: 0;
+      }
+
+      55% {
+        stroke-dashoffset: 0;
+      }
+
+      100% {
+        stroke-dashoffset: -1200;
+      }
+    }
+
+    /* Heartbeat pulse for medical elements */
+    @keyframes heartbeatPulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      15% {
+        transform: scale(1.15);
+      }
+
+      30% {
+        transform: scale(1);
+      }
+
+      45% {
+        transform: scale(1.08);
+      }
+
+      60% {
+        transform: scale(1);
+      }
+    }
+
+    .pulse-element {
+      animation: heartbeatPulse 1.5s ease-in-out infinite;
+    }
+
+    /* Heart icon glow */
+    @keyframes heartGlow {
+
+      0%,
+      100% {
+        filter: drop-shadow(0 0 4px var(--pink-glow));
+      }
+
+      50% {
+        filter: drop-shadow(0 0 16px var(--pink-glow)) drop-shadow(0 0 30px var(--red-glow));
+      }
+    }
+
+    .heart-icon {
+      display: inline-block;
+      animation: heartGlow 2s ease-in-out infinite;
+    }
+
+    /* ==========================================================================
+   HEADINGS & TEXT
+   ========================================================================== */
+    .heading-glow {
+      font-size: clamp(1.5rem, 5vw, 2.5rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--cyan), var(--soft-pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 20px rgba(0, 229, 255, 0.3));
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .question-text {
+      font-size: clamp(1.2rem, 4vw, 1.6rem);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+      line-height: 1.4;
+    }
+
+    .error-label {
+      font-size: 0.75rem;
+      color: var(--pink);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      margin-top: 0.5rem;
+      min-height: 1.2em;
+    }
+
+    .error-label.visible {
+      opacity: 1;
+      animation: glitchText 0.3s ease;
+    }
+
+    @keyframes glitchText {
+      0% {
+        transform: translate(0);
+      }
+
+      25% {
+        transform: translate(-2px, 1px);
+      }
+
+      50% {
+        transform: translate(2px, -1px);
+      }
+
+      75% {
+        transform: translate(-1px, 2px);
+      }
+
+      100% {
+        transform: translate(0);
+      }
+    }
+
+    /* ==========================================================================
+   BUTTONS
+   ========================================================================== */
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+      min-height: 60px;
+      position: relative;
+    }
+
+    .btn {
+      padding: 0.85rem 2rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      position: relative;
+      letter-spacing: 0.5px;
+      outline: none;
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid var(--cyan);
+      outline-offset: 3px;
+    }
+
+    .btn-yes {
+      background: linear-gradient(135deg, var(--cyan), #00b8d4);
+      color: var(--bg-deep);
+      box-shadow: 0 4px 15px var(--cyan-glow);
+    }
+
+    .btn-yes:hover {
+      box-shadow: 0 6px 25px var(--cyan-glow), 0 0 40px var(--cyan-glow);
+      transform: translateY(-2px) scale(1.03);
+    }
+
+    .btn-yes:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .btn-no {
+      background: rgba(255, 45, 117, 0.15);
+      color: var(--soft-pink);
+      border: 1px solid rgba(255, 45, 117, 0.3);
+      box-shadow: 0 4px 10px rgba(255, 45, 117, 0.1);
+      transition: all 0.15s ease;
+      min-width: 100px;
+      min-height: 48px;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      user-select: none;
+    }
+
+    .btn-no:hover {
+      background: rgba(255, 45, 117, 0.25);
+    }
+
+    /* The dodging No button when repositioned */
+    .btn-no.dodging {
+      position: absolute;
+      z-index: 100;
+      animation: dodgePop 0.3s ease;
+    }
+
+    @keyframes dodgePop {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.15);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    /* After max dodges, button fades out */
+    .btn-no.dodged-out {
+      opacity: 0 !important;
+      pointer-events: none !important;
+      transform: scale(0.3) rotate(20deg) !important;
+      transition: all 0.5s ease !important;
+    }
+
+    /* ==========================================================================
+   BEGIN SCAN BUTTON — Landing CTA
+   ========================================================================== */
+    .btn-scan {
+      padding: 1rem 2.5rem;
+      background: transparent;
+      border: 2px solid var(--cyan);
+      color: var(--cyan);
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition);
+      margin-top: 2rem;
+    }
+
+    .btn-scan::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--cyan-glow), var(--pink-glow));
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+
+    .btn-scan:hover {
+      border-color: var(--soft-pink);
+      color: #fff;
+      box-shadow: 0 0 30px var(--cyan-glow), 0 0 60px var(--pink-glow);
+      transform: translateY(-2px);
+    }
+
+    .btn-scan:hover::before {
+      opacity: 1;
+    }
+
+    .btn-scan span {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ==========================================================================
+   VITAL SIGNS DISPLAY — Decorative medical UI
+   ========================================================================== */
+    .vitals-bar {
+      display: flex;
+      justify-content: space-around;
+      padding: 0.75rem 0;
+      margin-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .vital-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .vital-value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--cyan);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .vital-value.pink {
+      color: var(--soft-pink);
+    }
+
+    /* ==========================================================================
+   PROGRESS / LOADING BAR — Fake compatibility scan
+   ========================================================================== */
+    .scan-bar-container {
+      width: 100%;
+      margin: 1.5rem 0;
+    }
+
+    .scan-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .scan-bar-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .scan-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--cyan), var(--soft-pink));
+      border-radius: 4px;
+      transition: width 0.3s ease;
+      position: relative;
+      box-shadow: 0 0 10px var(--cyan-glow);
+    }
+
+    .scan-bar-fill::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: -4px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 12px var(--cyan), 0 0 24px var(--cyan-glow);
+    }
+
+    /* ==========================================================================
+   FINAL REVEAL SCREEN
+   ========================================================================== */
+    .reveal-name {
+      font-size: clamp(2rem, 8vw, 4rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--cyan), var(--soft-pink), var(--cyan));
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 3s ease-in-out infinite;
+      filter: drop-shadow(0 0 30px var(--cyan-glow));
+      margin-bottom: 0.5rem;
+    }
+
+    @keyframes gradientShift {
+
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+
+    .reveal-subtitle {
+      font-size: clamp(1rem, 3vw, 1.3rem);
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      max-width: 500px;
+      line-height: 1.7;
+    }
+
+    .reveal-message {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* Star-tunnel / warp animation for transition */
+    @keyframes warpIn {
+      0% {
+        transform: scale(0) rotate(-10deg);
+        opacity: 0;
+        filter: blur(20px);
+      }
+
+      60% {
+        transform: scale(1.05) rotate(2deg);
+        opacity: 0.8;
+        filter: blur(2px);
+      }
+
+      100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+        filter: blur(0);
+      }
+    }
+
+    .screen.warp-in {
+      animation: warpIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ==========================================================================
+   CONFETTI / BURST — Canvas overlay for final celebration
+   ========================================================================== */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 9;
+      pointer-events: none;
+    }
+
+    /* ==========================================================================
+   PLANET DECORATION
+   ========================================================================== */
+    .planet {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .planet-1 {
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle at 35% 35%, #3a1c71, #d76d77, #ffaf7b);
+      top: 10%;
+      right: -40px;
+      opacity: 0.15;
+      animation: floatSlow 20s ease-in-out infinite;
+    }
+
+    .planet-2 {
+      width: 80px;
+      height: 80px;
+      background: radial-gradient(circle at 40% 30%, #0c3547, #00e5ff, #1de9b6);
+      bottom: 15%;
+      left: -20px;
+      opacity: 0.1;
+      animation: floatSlow 25s ease-in-out infinite reverse;
+    }
+
+    @keyframes floatSlow {
+
+      0%,
+      100% {
+        transform: translateY(0) translateX(0);
+      }
+
+      25% {
+        transform: translateY(-15px) translateX(5px);
+      }
+
+      75% {
+        transform: translateY(10px) translateX(-8px);
+      }
+    }
+
+    /* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+    @media (max-width: 600px) {
+      .screen {
+        padding: 1rem 0.75rem;
+      }
+
+      .glass-card {
+        padding: 1.25rem 0.75rem;
+        margin: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+
+      .btn-group {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .btn {
+        width: 100%;
+        max-width: 280px;
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+        min-height: 50px;
+      }
+
+      .btn-no {
+        min-height: 50px;
+        font-size: 1rem;
+        padding: 1rem 1.5rem;
+      }
+
+      .question-text {
+        font-size: clamp(1.1rem, 5vw, 1.4rem);
+        margin-bottom: 1rem;
+      }
+
+      .heading-glow {
+        font-size: clamp(1.2rem, 6vw, 2rem);
+      }
+
+      .vitals-bar {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        font-size: 0.65rem;
+      }
+
+      .ecg-container {
+        height: 60px;
+      }
+
+      .error-label {
+        font-size: 0.7rem;
+      }
+
+      .console-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+      }
+
+      .console-title {
+        font-size: 0.6rem;
+      }
+
+      .reveal-name {
+        font-size: clamp(1.3rem, 6vw, 2.5rem);
+      }
+
+      .reveal-subtitle {
+        font-size: clamp(0.8rem, 3vw, 1rem);
+        margin-bottom: 1rem;
+        padding: 0 0.25rem;
+      }
+
+      .reveal-message {
+        font-size: 0.85rem;
+        line-height: 1.6;
+        padding: 0 0.25rem;
+      }
+
+      .result-percent {
+        font-size: clamp(2rem, 10vw, 3.5rem);
+        margin: 0.25rem 0;
+      }
+
+      .scan-badge {
+        font-size: 0.65rem;
+        padding: 0.3rem 0.75rem;
+      }
+
+      /* Dodging button on mobile stays within safe area */
+      .btn-no.dodging {
+        min-width: 90px;
+        min-height: 44px;
+        font-size: 0.95rem;
+        padding: 0.75rem 1.25rem;
+      }
+
+      #screen-q3 .btn-yes.mega {
+        padding: 1.5rem 2rem;
+        font-size: 1.2rem;
+        width: 100%;
+      }
+
+      /* Reveal screen mobile fit */
+      #screen-reveal {
+        padding: 1rem 0.5rem;
+        justify-content: flex-start;
+        padding-top: 2rem;
+      }
+
+      #screen-reveal>div {
+        max-width: 100%;
+        width: 100%;
+        padding: 0;
+      }
+
+      #screen-reveal .glass-card {
+        margin: 1rem 0 0 0;
+        padding: 1rem 0.75rem;
+      }
+    }
+
+    /* ==========================================================================
+   ACCESSIBILITY — Reduced motion
+   ========================================================================== */
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ==========================================================================
+   SCREEN-SPECIFIC OVERRIDES
+   ========================================================================== */
+
+    /* Q3: Yes button grows huge */
+    #screen-q3 .btn-yes {
+      transition: all 0.5s ease;
+    }
+
+    #screen-q3 .btn-yes.mega {
+      padding: 2rem 4rem;
+      font-size: 1.5rem;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    /* Final screen heart burst */
+    .heart-burst {
+      position: absolute;
+      pointer-events: none;
+      font-size: 1.5rem;
+      animation: burstHeart 1.5s ease-out forwards;
+      z-index: 20;
+    }
+
+    @keyframes burstHeart {
+      0% {
+        transform: scale(0) translateY(0);
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.8;
+      }
+
+      100% {
+        transform: scale(1.5) translateY(-100px);
+        opacity: 0;
+      }
+    }
+
+    /* Scan-complete badge */
+    .scan-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0.4rem 1rem;
+      background: rgba(0, 229, 255, 0.1);
+      border: 1px solid rgba(0, 229, 255, 0.2);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      color: var(--cyan);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .scan-badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--cyan);
+      animation: blink 1s ease infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.2;
+      }
+    }
+
+    /* ECG spike burst on scan screen */
+    .ecg-spike {
+      width: 100%;
+      max-width: 400px;
+      height: 60px;
+      margin: 1rem auto;
+    }
+
+    .ecg-spike-line {
+      fill: none;
+      stroke: var(--pink);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      filter: drop-shadow(0 0 10px var(--pink-glow));
+      stroke-dasharray: 500;
+      stroke-dashoffset: 500;
+    }
+
+    .ecg-spike-line.animate {
+      animation: drawECGSpike 1.5s ease-in-out infinite;
+    }
+
+    @keyframes drawECGSpike {
+      0% {
+        stroke-dashoffset: 500;
+      }
+
+      40% {
+        stroke-dashoffset: 0;
+      }
+
+      50% {
+        stroke-dashoffset: 0;
+      }
+
+      100% {
+        stroke-dashoffset: -500;
+      }
+    }
+
+    /* Result percentage */
+    .result-percent {
+      font-size: clamp(3rem, 10vw, 5rem);
+      font-weight: 800;
+      color: var(--cyan);
+      text-shadow: 0 0 30px var(--cyan-glow), 0 0 60px var(--cyan-glow);
+      margin: 0.5rem 0;
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ======================================================================
+     STARFIELD BACKGROUND
+     ====================================================================== -->
+  <div id="starfield">
+    <div class="stars-layer stars-sm" id="stars-sm"></div>
+    <div class="stars-layer stars-md" id="stars-md"></div>
+    <div class="stars-layer stars-lg" id="stars-lg"></div>
+    <div class="nebula-drift"></div>
+  </div>
+
+  <!-- Planets -->
+  <div class="planet planet-1"></div>
+  <div class="planet planet-2"></div>
+
+  <!-- Floating Hearts (ambient) -->
+  <div class="floating-hearts" id="floating-hearts"></div>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- ======================================================================
+     SCREEN 1 — LANDING
+     ====================================================================== -->
+  <section class="screen active" id="screen-landing">
+    <div class="glass-card">
+      <div class="console-header">
+        <span class="console-dot red"></span>
+        <span class="console-dot yellow"></span>
+        <span class="console-dot green"></span>
+        <span class="console-title">SPECIAL-HATE-DIAG v3.1.4</span>
+      </div>
+
+      <div class="scan-badge">
+        <span class="dot"></span>
+        System Online
+      </div>
+
+      <h1 class="heading-glow">Initiating Special Diagnostics...</h1>
+      <p class="subtitle">Cardiac-Emotional Scan Module</p>
+
+      <!-- ECG Heartbeat Line -->
+      <div class="ecg-container">
+        <svg viewBox="0 0 500 80" preserveAspectRatio="none" width="100%" height="100%">
+          <polyline class="ecg-line" id="ecg-main"
+            points="0,40 80,40 100,40 110,20 120,60 130,10 140,70 150,40 170,40 250,40 270,40 280,20 290,60 300,10 310,70 320,40 340,40 420,40 440,40 450,20 460,60 470,10 480,70 490,40 500,40" />
+        </svg>
+      </div>
+
+      <div class="vitals-bar">
+        <div class="vital-item">
+          <span>BPM</span>
+          <span class="vital-value" id="bpm-value">72</span>
+        </div>
+        <div class="vital-item">
+          <span>O2</span>
+          <span class="vital-value">99%</span>
+        </div>
+        <div class="vital-item">
+          <span>LOVE</span>
+          <span class="vital-value pink">&#x221E;</span>
+        </div>
+      </div>
+
+      <button class="btn-scan" id="btn-begin" onclick="goToScreen('screen-q1')">
+        <span>&#9829; Begin Scan</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ======================================================================
+     SCREEN 2 — QUESTION 1: "Do you Hate me?"
+     ====================================================================== -->
+  <section class="screen" id="screen-q1">
+    <div class="glass-card">
+      <div class="console-header">
+        <span class="console-dot red"></span>
+        <span class="console-dot yellow"></span>
+        <span class="console-dot green"></span>
+        <span class="console-title">SCAN MODULE 1/3</span>
+      </div>
+
+      <!-- Decorative heart icon -->
+      <div class="heart-icon pulse-element" style="font-size: 2.5rem; margin-bottom: 1rem;">
+        <!-- SVG heart -->
+        <svg width="40" height="36" viewBox="0 0 40 36" fill="none">
+          <path
+            d="M20 36L17.1 33.36C6.8 24 0 17.84 0 10.2C0 4.04 4.84 0 10.6 0C13.88 0 17.02 1.58 20 4.36C22.98 1.58 26.12 0 29.4 0C35.16 0 40 4.04 40 10.2C40 17.84 33.2 24 22.9 33.36L20 36Z"
+            fill="url(#heartGrad1)" />
+          <defs>
+            <linearGradient id="heartGrad1" x1="0" y1="0" x2="40" y2="36">
+              <stop offset="0%" stop-color="#ff2d75" />
+              <stop offset="100%" stop-color="#ff6b9d" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <p class="question-text">Do you Hate me?</p>
+
+      <div class="btn-group">
+        <button class="btn btn-yes" onclick="goToScreen('screen-q2')">Yes</button>
+        <button class="btn btn-no" id="no-btn-1" onclick="dodgeButton(this)">No</button>
+      </div>
+
+      <p class="error-label" id="error-1">&#9888; Error 404:Website ala pani cheyyadhu</p>
+
+      <div class="vitals-bar">
+        <div class="vital-item">
+          <span>STATUS</span>
+          <span class="vital-value">SCANNING</span>
+        </div>
+        <div class="vital-item">
+          <span>EMOTION</span>
+          <span class="vital-value pink">DETECTED</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================================
+     SCREEN 3 — QUESTION 2: "Are you sure?"
+     ====================================================================== -->
+  <section class="screen" id="screen-q2">
+    <div class="glass-card">
+      <div class="console-header">
+        <span class="console-dot red"></span>
+        <span class="console-dot yellow"></span>
+        <span class="console-dot green"></span>
+        <span class="console-title">SCAN MODULE 2/3</span>
+      </div>
+
+      <div class="heart-icon pulse-element" style="font-size: 2rem; margin-bottom: 1rem;">
+        <svg width="32" height="29" viewBox="0 0 40 36" fill="none">
+          <path
+            d="M20 36L17.1 33.36C6.8 24 0 17.84 0 10.2C0 4.04 4.84 0 10.6 0C13.88 0 17.02 1.58 20 4.36C22.98 1.58 26.12 0 29.4 0C35.16 0 40 4.04 40 10.2C40 17.84 33.2 24 22.9 33.36L20 36Z"
+            fill="url(#heartGrad2)" />
+          <defs>
+            <linearGradient id="heartGrad2" x1="0" y1="0" x2="40" y2="36">
+              <stop offset="0%" stop-color="#ff6b9d" />
+              <stop offset="100%" stop-color="#00e5ff" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <p class="question-text">Are you sure? &#128525;</p>
+
+      <div class="btn-group">
+        <button class="btn btn-yes" id="yes-btn-2" onclick="goToScreen('screen-q3')">Yes, I'm sure!</button>
+        <button class="btn btn-no" id="no-btn-2" onclick="dodgeButton(this)">No</button>
+      </div>
+
+      <p class="error-label" id="error-2">&#9888; Cheppana ala pani cheyyadhu ani</p>
+
+      <div class="vitals-bar">
+        <div class="vital-item">
+          <span>CONFIDENCE</span>
+          <span class="vital-value">HIGH</span>
+        </div>
+        <div class="vital-item">
+          <span>HEARTBEAT</span>
+          <span class="vital-value pink" id="bpm-q2">92</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================================
+     SCREEN 4 — QUESTION 3: "100% sure?"
+     ====================================================================== -->
+  <section class="screen" id="screen-q3">
+    <div class="glass-card">
+      <div class="console-header">
+        <span class="console-dot red"></span>
+        <span class="console-dot yellow"></span>
+        <span class="console-dot green"></span>
+        <span class="console-title">SCAN MODULE 3/3</span>
+      </div>
+
+      <p class="question-text">100% sure? Last chance! &#128156;</p>
+
+      <div class="btn-group" style="flex-direction: column; align-items: center;">
+        <button class="btn btn-yes mega" id="yes-btn-3" onclick="goToScreen('screen-scan')">
+          YES! Absolutely! &#10084;&#65039;
+        </button>
+        <button class="btn btn-no" id="no-btn-3" style="font-size: 0.7rem; padding: 0.4rem 1rem; opacity: 0.5;"
+          onclick="dodgeButton(this)">no...</button>
+      </div>
+
+      <p class="error-label" id="error-3">&#9888; Mari adhe poyindhi kadhu </p>
+    </div>
+  </section>
+
+  <!-- ======================================================================
+     SCREEN 5 — COMPATIBILITY SCAN (Loading Bar)
+     ====================================================================== -->
+  <section class="screen" id="screen-scan">
+    <div class="glass-card">
+      <div class="console-header">
+        <span class="console-dot red"></span>
+        <span class="console-dot yellow"></span>
+        <span class="console-dot green"></span>
+        <span class="console-title">ANALYSIS IN PROGRESS</span>
+      </div>
+
+      <div class="scan-badge">
+        <span class="dot"></span>
+        Scanning Heart
+      </div>
+
+      <p class="question-text">Scanning Heart Compatibility...</p>
+
+      <!-- ECG spike animation -->
+      <div class="ecg-spike">
+        <svg viewBox="0 0 400 60" preserveAspectRatio="none" width="100%" height="100%">
+          <polyline class="ecg-spike-line" id="ecg-spike-line"
+            points="0,30 60,30 80,30 90,10 100,50 110,5 115,55 120,30 150,30 200,30 220,30 230,10 240,50 250,5 255,55 260,30 290,30 340,30 360,30 370,10 380,50 390,5 395,55 400,30" />
+        </svg>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="scan-bar-container">
+        <div class="scan-bar-label">
+          <span>Analyzing...</span>
+          <span id="scan-percent">0%</span>
+        </div>
+        <div class="scan-bar-track">
+          <div class="scan-bar-fill" id="scan-bar-fill"></div>
+        </div>
+      </div>
+
+      <div class="vitals-bar" id="scan-vitals">
+        <div class="vital-item">
+          <span>MATCH</span>
+          <span class="vital-value" id="scan-match">--</span>
+        </div>
+        <div class="vital-item">
+          <span>UNDERSTANDING</span>
+          <span class="vital-value pink" id="scan-chem">--</span>
+        </div>
+        <div class="vital-item">
+          <span>DESTINY</span>
+          <span class="vital-value" id="scan-destiny">--</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================================
+     SCREEN 6 — FINAL REVEAL
+     ====================================================================== -->
+  <section class="screen" id="screen-reveal">
+    <div
+      style="text-align: center; max-width: 600px; width: 100%; position: relative; padding: 1rem 0; margin: auto 0;">
+
+      <div class="scan-badge" style="margin-bottom: 1.5rem;">
+        <span class="dot" style="background: var(--soft-pink);"></span>
+        Scan Complete — 100% Match
+      </div>
+
+      <p class="result-percent pulse-element">100%</p>
+
+      <h1 class="reveal-name" id="reveal-name-el">Happy Birthday!</h1>
+      <p class="reveal-subtitle" id="reveal-message">
+        In every universe maybe today is your birthday and in every universe I tried to be my best in wishing you bgrm.
+        &#127775;&#10084;&#65039;
+      </p>
+
+      <div class="glass-card" style="margin-top: 1.5rem;">
+        <p class="reveal-message">
+          The diagnostic is in: <strong style="color: var(--cyan);">your heart is pure gold</strong>,
+          your presence makes every day feel like a celebration to me and thanks for being with me. You have many more
+          birthdays and many more moments to celebrate. And i will be there with you in every moment. Hope you will have
+          a best year until i wish you next year(HEHE).
+          <br><br>
+          I wish you a birthday as infinite and beautiful as the stars above to my favorite person in this universe.
+          <br>
+          <span style="color: var(--soft-pink);">&#10084; With all the love in the universe &#10084;</span>
+        </p>
+
+        <div class="vitals-bar" style="margin-top: 1.5rem;">
+          <div class="vital-item">
+            <span>HATE LEVEL</span>
+            <span class="vital-value pink">MAX</span>
+          </div>
+          <div class="vital-item">
+            <span>BIRTHDAY</span>
+            <span class="vital-value">TODAY</span>
+          </div>
+          <div class="vital-item">
+            <span>HAPPINESS</span>
+            <span class="vital-value pink">&#x221E;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ======================================================================
+     JAVASCRIPT — Interactivity, Star Generation, Transitions
+     ====================================================================== -->
+  <script>
+    /* ==========================================================================
+       CONFIGURATION — Change NAME here!
+       ========================================================================== */
+    const BIRTHDAY_NAME = "Naa Gaaju Bomma";  // <--- CHANGE THIS NAME
+
+    /* Apply the name to the reveal screen */
+    document.getElementById('reveal-name-el').textContent = `Happy Birthday, ${BIRTHDAY_NAME}!`;
+
+    /* ==========================================================================
+       STARFIELD GENERATOR — Programmatic CSS box-shadows for stars
+       ========================================================================== */
+    function generateStars(count, maxSize) {
+      const shadows = [];
+      for (let i = 0; i < count; i++) {
+        const x = Math.random() * 2000;
+        const y = Math.random() * 2000;
+        const size = Math.random() * maxSize;
+        const opacity = 0.3 + Math.random() * 0.7;
+        shadows.push(`${x}px ${y}px ${size}px rgba(255,255,255,${opacity})`);
+      }
+      return shadows.join(', ');
+    }
+
+    // Apply star layers
+    document.getElementById('stars-sm').style.boxShadow = generateStars(200, 1);
+    document.getElementById('stars-md').style.boxShadow = generateStars(80, 1.5);
+    document.getElementById('stars-lg').style.boxShadow = generateStars(30, 2.5);
+
+    /* ==========================================================================
+       FLOATING HEARTS — Generate ambient floating heart elements
+       ========================================================================== */
+    (function createFloatingHearts() {
+      const container = document.getElementById('floating-hearts');
+      const heartChars = ['\u2665', '\u2661', '\u2764', '\uD83D\uDC97'];
+      for (let i = 0; i < 15; i++) {
+        const heart = document.createElement('span');
+        heart.className = 'floating-heart';
+        heart.textContent = heartChars[Math.floor(Math.random() * heartChars.length)];
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.animationDuration = (12 + Math.random() * 18) + 's';
+        heart.style.animationDelay = (Math.random() * 20) + 's';
+        heart.style.fontSize = (0.6 + Math.random() * 1.2) + 'rem';
+        container.appendChild(heart);
+      }
+    })();
+
+    /* ==========================================================================
+       SCREEN TRANSITIONS — Fade between sections
+       ========================================================================== */
+    let currentScreen = 'screen-landing';
+    let isTransitioning = false;
+
+    function goToScreen(targetId) {
+      if (isTransitioning) return;
+      isTransitioning = true;
+
+      const current = document.getElementById(currentScreen);
+      const target = document.getElementById(targetId);
+
+      // Reset dodge buttons on the CURRENT screen before leaving
+      // This forces fixed-position buttons back into normal flow
+      // so they properly hide with the parent screen
+      resetDodgeButtons(currentScreen);
+
+      // Exit current
+      current.classList.add('exit');
+
+      setTimeout(() => {
+        current.classList.remove('active', 'exit');
+
+        // Special warp animation for the reveal screen
+        if (targetId === 'screen-reveal') {
+          target.classList.add('active', 'warp-in');
+          startConfetti();
+          burstHearts();
+        } else {
+          target.classList.add('active');
+        }
+
+        currentScreen = targetId;
+        isTransitioning = false;
+
+        // Trigger scan animation if going to scan screen
+        if (targetId === 'screen-scan') {
+          startScanAnimation();
+        }
+
+        // Reset any dodging No buttons for the new screen
+        resetDodgeButtons(targetId);
+      }, 600);
+    }
+
+    /* Reset No buttons that may have gone out of their flow */
+    function resetDodgeButtons(screenId) {
+      const screen = document.getElementById(screenId);
+      if (!screen) return;
+
+      // Find all No buttons — both inside the screen and any that were moved to screen root
+      const noBtns = screen.querySelectorAll('.btn-no');
+      noBtns.forEach(btn => {
+        // Move back to original parent (btn-group) if it was moved out
+        if (btn._originalParent && btn.parentElement !== btn._originalParent) {
+          btn._originalParent.appendChild(btn);
+        }
+        btn.classList.remove('dodging', 'dodged-out');
+        btn.style.position = '';
+        btn.style.top = '';
+        btn.style.left = '';
+        btn.style.display = '';
+        // Reset dodge counts
+        if (btn.id) dodgeCounts[btn.id] = 0;
+      });
+
+      // Also reset error labels
+      const errorLabels = screen.querySelectorAll('.error-label');
+      errorLabels.forEach(el => el.classList.remove('visible'));
+    }
+
+    /* ==========================================================================
+       DODGE BUTTON LOGIC — No button dodges 2 times then disappears
+       ========================================================================== */
+    const dodgeCounts = {};
+    const MAX_DODGES = 2;
+
+    function dodgeButton(btn) {
+      const id = btn.id;
+
+      // Track dodge count
+      if (!dodgeCounts[id]) dodgeCounts[id] = 0;
+      dodgeCounts[id]++;
+
+      // Store original parent so we can move it back later
+      if (!btn._originalParent) {
+        btn._originalParent = btn.parentElement;
+      }
+
+      const screenEl = btn.closest('.screen') || btn._originalParent.closest('.screen');
+      const errorLabel = screenEl ? screenEl.querySelector('.error-label') : null;
+
+      // Make Q2 Yes button grow on each dodge
+      if (id === 'no-btn-2') {
+        const yesBtn = document.getElementById('yes-btn-2');
+        const scale = 1 + dodgeCounts[id] * 0.08;
+        yesBtn.style.transform = `scale(${Math.min(scale, 1.3)})`;
+        yesBtn.style.boxShadow = `0 6px ${15 + dodgeCounts[id] * 5}px var(--cyan-glow)`;
+      }
+
+      // After MAX_DODGES: show error, hide button
+      if (dodgeCounts[id] >= MAX_DODGES) {
+        if (errorLabel) {
+          errorLabel.classList.add('visible');
+        }
+        btn.classList.add('dodged-out');
+        setTimeout(() => {
+          btn.style.display = 'none';
+        }, 500);
+        return;
+      }
+
+      // --- Dodge: move button out of glass-card into the screen element ---
+      // This is necessary because glass-card has backdrop-filter which creates
+      // a containing block, and overflow:hidden which clips the button
+      if (screenEl && btn.parentElement !== screenEl) {
+        screenEl.appendChild(btn);
+      }
+
+      // Calculate position relative to viewport (screen covers full viewport with inset:0)
+      const padding = 50;
+      const btnWidth = 120;
+      const btnHeight = 50;
+      const maxX = window.innerWidth - btnWidth - padding;
+      const maxY = window.innerHeight - btnHeight - padding;
+
+      let newX, newY;
+      let attempts = 0;
+      const prevLeft = parseInt(btn.style.left) || 0;
+      const prevTop = parseInt(btn.style.top) || 0;
+      do {
+        newX = Math.max(padding, Math.random() * maxX);
+        newY = Math.max(padding, Math.random() * maxY);
+        attempts++;
+      } while (
+        attempts < 10 &&
+        Math.abs(newX - prevLeft) < 150 &&
+        Math.abs(newY - prevTop) < 150
+      );
+
+      btn.classList.add('dodging');
+      btn.style.left = newX + 'px';
+      btn.style.top = newY + 'px';
+
+      btn.offsetHeight;
+    }
+
+    /* ==========================================================================
+       BPM COUNTER — Animate the heart rate number on the landing screen
+       ========================================================================== */
+    (function animateBPM() {
+      const bpmEl = document.getElementById('bpm-value');
+      if (!bpmEl) return;
+      let bpm = 72;
+      let direction = 1;
+
+      setInterval(() => {
+        bpm += direction * (Math.floor(Math.random() * 3) + 1);
+        if (bpm > 95) direction = -1;
+        if (bpm < 68) direction = 1;
+        bpmEl.textContent = bpm;
+      }, 800);
+    })();
+
+    /* ==========================================================================
+       COMPATIBILITY SCAN — Animated loading bar with fake diagnostics
+       ========================================================================== */
+    function startScanAnimation() {
+      const fill = document.getElementById('scan-bar-fill');
+      const percentLabel = document.getElementById('scan-percent');
+      const matchEl = document.getElementById('scan-match');
+      const chemEl = document.getElementById('scan-chem');
+      const destinyEl = document.getElementById('scan-destiny');
+      const spikeLine = document.getElementById('ecg-spike-line');
+
+      // Reset ECG spike animation so it replays fresh
+      spikeLine.classList.remove('animate');
+      void spikeLine.offsetWidth; // force reflow
+      spikeLine.classList.add('animate');
+
+      let progress = 0;
+      const milestones = [
+        { at: 20, match: '42%', chem: 'LOW', destiny: '...' },
+        { at: 45, match: '67%', chem: 'RISING', destiny: 'MAYBE' },
+        { at: 70, match: '88%', chem: 'HIGH', destiny: 'LIKELY' },
+        { at: 90, match: '97%', chem: 'EXTREME', destiny: 'CERTAIN' },
+        { at: 100, match: '100%', chem: 'MAX', destiny: '!!! ???' },
+      ];
+
+      const interval = setInterval(() => {
+        // Variable speed — slows down near 100%
+        const increment = progress < 60 ? 2 : progress < 85 ? 1 : 0.5;
+        progress = Math.min(100, progress + increment);
+
+        fill.style.width = progress + '%';
+        percentLabel.textContent = Math.round(progress) + '%';
+
+        // Update milestones
+        for (const m of milestones) {
+          if (progress >= m.at) {
+            matchEl.textContent = m.match;
+            chemEl.textContent = m.chem;
+            destinyEl.textContent = m.destiny;
+          }
+        }
+
+        if (progress >= 100) {
+          clearInterval(interval);
+          // Auto-advance to reveal after a dramatic pause
+          setTimeout(() => {
+            goToScreen('screen-reveal');
+          }, 1200);
+        }
+      }, 60);
+    }
+
+    /* ==========================================================================
+       CONFETTI — Canvas-based particle celebration
+       ========================================================================== */
+    function startConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = [
+        '#00e5ff', '#ff2d75', '#ff6b9d', '#ffaf7b',
+        '#7c4dff', '#69f0ae', '#ffd54f', '#ff8a80'
+      ];
+      const shapes = ['circle', 'square', 'heart', 'star'];
+
+      // Create particles
+      for (let i = 0; i < 150; i++) {
+        particles.push({
+          x: canvas.width / 2 + (Math.random() - 0.5) * 200,
+          y: canvas.height / 2,
+          vx: (Math.random() - 0.5) * 12,
+          vy: (Math.random() - 1) * 14 - 3,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          size: Math.random() * 8 + 3,
+          shape: shapes[Math.floor(Math.random() * shapes.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 8,
+          gravity: 0.12 + Math.random() * 0.08,
+          opacity: 1,
+          decay: 0.003 + Math.random() * 0.005,
+        });
+      }
+
+      function drawHeart(ctx, x, y, size) {
+        ctx.beginPath();
+        const s = size * 0.5;
+        ctx.moveTo(x, y + s * 0.3);
+        ctx.bezierCurveTo(x, y - s * 0.5, x - s, y - s * 0.5, x - s, y + s * 0.1);
+        ctx.bezierCurveTo(x - s, y + s * 0.6, x, y + s, x, y + s * 1.2);
+        ctx.bezierCurveTo(x, y + s, x + s, y + s * 0.6, x + s, y + s * 0.1);
+        ctx.bezierCurveTo(x + s, y - s * 0.5, x, y - s * 0.5, x, y + s * 0.3);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      function drawStar(ctx, x, y, size) {
+        ctx.beginPath();
+        const spikes = 5;
+        const outer = size;
+        const inner = size / 2;
+        for (let i = 0; i < spikes * 2; i++) {
+          const r = i % 2 === 0 ? outer : inner;
+          const angle = (Math.PI * i) / spikes - Math.PI / 2;
+          const px = x + Math.cos(angle) * r;
+          const py = y + Math.sin(angle) * r;
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        let alive = false;
+        for (const p of particles) {
+          if (p.opacity <= 0) continue;
+          alive = true;
+
+          p.x += p.vx;
+          p.vy += p.gravity;
+          p.y += p.vy;
+          p.rotation += p.rotSpeed;
+          p.opacity -= p.decay;
+          p.vx *= 0.99;
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rotation * Math.PI) / 180);
+          ctx.globalAlpha = Math.max(0, p.opacity);
+          ctx.fillStyle = p.color;
+
+          switch (p.shape) {
+            case 'circle':
+              ctx.beginPath();
+              ctx.arc(0, 0, p.size, 0, Math.PI * 2);
+              ctx.fill();
+              break;
+            case 'square':
+              ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+              break;
+            case 'heart':
+              drawHeart(ctx, 0, 0, p.size);
+              break;
+            case 'star':
+              drawStar(ctx, 0, 0, p.size);
+              break;
+          }
+
+          ctx.restore();
+        }
+
+        if (alive) requestAnimationFrame(animate);
+      }
+
+      animate();
+
+      // Burst additional waves
+      setTimeout(() => spawnWave(canvas, ctx, particles, colors, shapes), 800);
+      setTimeout(() => spawnWave(canvas, ctx, particles, colors, shapes), 1600);
+
+      // Keep confetti going with periodic waves while on reveal screen
+      let waveCount = 0;
+      const confettiInterval = setInterval(() => {
+        if (currentScreen !== 'screen-reveal') {
+          clearInterval(confettiInterval);
+          return;
+        }
+        spawnWave(canvas, ctx, particles, colors, shapes);
+        waveCount++;
+        // Re-kick the animation loop in case all particles had died
+        animate();
+      }, 3000);
+    }
+
+    function spawnWave(canvas, ctx, particles, colors, shapes) {
+      for (let i = 0; i < 60; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: -20,
+          vx: (Math.random() - 0.5) * 6,
+          vy: Math.random() * 6 + 2,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          size: Math.random() * 6 + 2,
+          shape: shapes[Math.floor(Math.random() * shapes.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 6,
+          gravity: 0.08,
+          opacity: 1,
+          decay: 0.004 + Math.random() * 0.006,
+        });
+      }
+    }
+
+    /* ==========================================================================
+       HEART BURST — Spawn heart emojis around the reveal screen
+       ========================================================================== */
+    function burstHearts() {
+      const count = 20;
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+          const heart = document.createElement('div');
+          heart.className = 'heart-burst';
+          heart.textContent = ['\u2764\uFE0F', '\uD83D\uDC96', '\uD83D\uDC97', '\uD83D\uDC95', '\u2728', '\uD83C\uDF1F'][Math.floor(Math.random() * 6)];
+          heart.style.left = (10 + Math.random() * 80) + '%';
+          heart.style.top = (20 + Math.random() * 60) + '%';
+          heart.style.fontSize = (1 + Math.random() * 2) + 'rem';
+          document.getElementById('screen-reveal').appendChild(heart);
+
+          // Clean up after animation
+          setTimeout(() => heart.remove(), 1500);
+        }, i * 100);
+      }
+
+      // Keep bursting hearts periodically while on the reveal screen
+      if (currentScreen === 'screen-reveal') {
+        setTimeout(() => {
+          if (currentScreen === 'screen-reveal') burstHearts();
+        }, 4000);
+      }
+    }
+
+    /* ==========================================================================
+       HANDLE WINDOW RESIZE — Keep dodging buttons in bounds
+       ========================================================================== */
+    window.addEventListener('resize', () => {
+      document.querySelectorAll('.btn-no.dodging').forEach(btn => {
+        const rect = btn.getBoundingClientRect();
+        const maxX = window.innerWidth - rect.width - 20;
+        const maxY = window.innerHeight - rect.height - 20;
+        btn.style.left = Math.min(parseFloat(btn.style.left), maxX) + 'px';
+        btn.style.top = Math.min(parseFloat(btn.style.top), maxY) + 'px';
+      });
+
+      // Resize confetti canvas
+      const canvas = document.getElementById('confetti-canvas');
+      if (canvas) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+    });
+
+  </script>
+</body>
+
+</html>
