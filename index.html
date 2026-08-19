@@ -851,200 +851,37 @@
     }
 
     /* ==========================================================================
-   RESPONSIVE
-   ========================================================================== */
-    @media (max-width: 600px) {
-      .screen {
-        padding: max(1rem, env(safe-area-inset-top)) 0.75rem max(1.5rem, env(safe-area-inset-bottom)) 0.75rem;
-      }
-
-      .glass-card {
-        padding: 1.5rem 1rem;
-        margin: auto 0;
-        max-width: 100%;
-        border-radius: var(--radius-sm);
-      }
-
-      .heading-glow {
-        font-size: clamp(1.25rem, 5.5vw, 1.85rem);
-        margin-bottom: 0.35rem;
-      }
-
-      .subtitle {
-        font-size: 0.75rem;
-        letter-spacing: 1px;
-        margin-bottom: 1rem;
-      }
-
-      .question-text {
-        font-size: clamp(1.1rem, 4.5vw, 1.35rem);
-        margin-bottom: 1rem;
-      }
-
-      .btn-group {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 0.75rem;
-        margin-top: 1.25rem;
-        min-height: 48px;
-        width: 100%;
-      }
-
-      .btn {
-        flex: 1 1 120px;
-        max-width: 160px;
-        padding: 0.75rem 1rem;
-        font-size: 0.95rem;
-        min-height: 46px;
-      }
-
-      .btn-no {
-        min-height: 46px;
-        font-size: 0.95rem;
-        padding: 0.75rem 1rem;
-        min-width: 90px;
-      }
-
-      .btn-scan {
-        width: 100%;
-        max-width: 280px;
-        padding: 0.85rem 1.5rem;
-        font-size: 0.95rem;
-        margin-top: 1.25rem;
-      }
-
-      #screen-q3 .btn-group {
-        flex-direction: column;
-        gap: 0.75rem;
-      }
-
-      #screen-q3 .btn-yes.mega {
-        padding: 1.1rem 1.25rem;
-        font-size: 1.1rem;
-        width: 100%;
-        max-width: 100%;
-      }
-
-      .ecg-container {
-        height: 55px;
-        margin: 1rem auto;
-      }
-
-      .ecg-spike {
-        height: 45px;
-        margin: 0.75rem auto;
-      }
-
-      .vitals-bar {
-        display: flex;
-        justify-content: space-around;
-        gap: 0.25rem;
-        padding: 0.5rem 0;
-        margin-top: 0.75rem;
-        font-size: 0.65rem;
-      }
-
-      .vital-item {
-        min-width: 0;
-        flex: 1;
-      }
-
-      .vital-value {
-        font-size: 0.9rem;
-      }
-
-      .error-label {
-        font-size: 0.7rem;
-        margin-top: 0.4rem;
-      }
-
-      .console-header {
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
-      }
-
-      .console-title {
-        font-size: 0.6rem;
-        letter-spacing: 1px;
-      }
-
-      .reveal-container {
-        padding: 0.5rem 0 1.5rem 0;
-      }
-
-      .reveal-name {
-        font-size: clamp(1.35rem, 6vw, 2.2rem);
-        line-height: 1.25;
-        margin-bottom: 0.35rem;
-      }
-
-      .reveal-subtitle {
-        font-size: clamp(0.85rem, 3.2vw, 0.95rem);
-        margin-bottom: 1rem;
-        line-height: 1.5;
-        padding: 0 0.25rem;
-      }
-
-      .reveal-message {
-        font-size: 0.85rem;
-        line-height: 1.6;
-        padding: 0;
-      }
-
-      .result-percent {
-        font-size: clamp(2.2rem, 9vw, 3.5rem);
-        margin: 0.25rem 0;
-      }
-
-      .scan-badge {
-        font-size: 0.65rem;
-        padding: 0.3rem 0.75rem;
-        margin-bottom: 0.75rem;
-      }
-
-      /* Dodging button on mobile stays within safe area */
-      .btn-no.dodging {
-        min-width: 85px;
-        min-height: 42px;
-        font-size: 0.9rem;
-        padding: 0.6rem 1rem;
-      }
-
-      #screen-reveal .glass-card {
-        margin-top: 1rem;
-        padding: 1.25rem 0.85rem;
-      }
-    }
-
-    /* ==========================================================================
-   ACCESSIBILITY — Reduced motion
-   ========================================================================== */
-    @media (prefers-reduced-motion: reduce) {
-
-      *,
-      *::before,
-      *::after {
-        animation-duration: 0.01ms !important;
-        transition-duration: 0.01ms !important;
-      }
-    }
-
-    /* ==========================================================================
    SCREEN-SPECIFIC OVERRIDES
    ========================================================================== */
 
-    /* Q3: Yes button grows huge */
+    /* Q3: Yes button proportional styling */
     #screen-q3 .btn-yes {
-      transition: all 0.5s ease;
+      transition: all 0.35s ease;
     }
 
     #screen-q3 .btn-yes.mega {
-      padding: 2rem 4rem;
-      font-size: 1.5rem;
-      width: 90%;
-      max-width: 400px;
+      padding: 1.1rem 2.2rem;
+      font-size: 1.25rem;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    /* Q3: Tiny subtle no button */
+    #no-btn-3 {
+      min-width: unset;
+      min-height: unset;
+      padding: 0.35rem 0.85rem;
+      font-size: 0.75rem;
+      border: 1px dashed rgba(255, 45, 117, 0.3);
+      background: transparent;
+      opacity: 0.6;
+      margin-top: 0.35rem;
+      box-shadow: none;
+    }
+
+    #no-btn-3:hover {
+      background: rgba(255, 45, 117, 0.15);
+      opacity: 0.9;
     }
 
     /* Final screen heart burst */
@@ -1156,6 +993,197 @@
       text-shadow: 0 0 30px var(--cyan-glow), 0 0 60px var(--cyan-glow);
       margin: 0.5rem 0;
       font-variant-numeric: tabular-nums;
+    }
+
+    /* ==========================================================================
+   RESPONSIVE (Mobile styles take final cascade precedence)
+   ========================================================================== */
+    @media (max-width: 600px) {
+      .screen {
+        padding: max(1rem, env(safe-area-inset-top)) 0.75rem max(1.5rem, env(safe-area-inset-bottom)) 0.75rem;
+      }
+
+      .glass-card {
+        padding: 1.5rem 1rem;
+        margin: auto 0;
+        max-width: 100%;
+        border-radius: var(--radius-sm);
+      }
+
+      .heading-glow {
+        font-size: clamp(1.25rem, 5.5vw, 1.75rem);
+        margin-bottom: 0.35rem;
+      }
+
+      .subtitle {
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        margin-bottom: 1rem;
+      }
+
+      .question-text {
+        font-size: clamp(1.05rem, 4.5vw, 1.3rem);
+        margin-bottom: 1rem;
+      }
+
+      .btn-group {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-top: 1.25rem;
+        min-height: 46px;
+        width: 100%;
+      }
+
+      .btn {
+        flex: 1 1 110px;
+        max-width: 150px;
+        padding: 0.7rem 1rem;
+        font-size: 0.9rem;
+        min-height: 44px;
+      }
+
+      .btn-no {
+        min-height: 44px;
+        font-size: 0.9rem;
+        padding: 0.7rem 1rem;
+        min-width: 85px;
+      }
+
+      .btn-scan {
+        width: 100%;
+        max-width: 260px;
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+        margin-top: 1.25rem;
+      }
+
+      #screen-q3 .btn-group {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: center;
+      }
+
+      #screen-q3 .btn-yes.mega {
+        padding: 0.9rem 1.5rem;
+        font-size: 1.05rem;
+        width: 100%;
+        max-width: 280px;
+        min-height: 48px;
+      }
+
+      #no-btn-3 {
+        min-width: unset;
+        min-height: unset;
+        width: auto;
+        padding: 0.3rem 0.75rem;
+        font-size: 0.72rem;
+      }
+
+      .ecg-container {
+        height: 55px;
+        margin: 1rem auto;
+      }
+
+      .ecg-spike {
+        height: 45px;
+        margin: 0.75rem auto;
+      }
+
+      .vitals-bar {
+        display: flex;
+        justify-content: space-around;
+        gap: 0.25rem;
+        padding: 0.5rem 0;
+        margin-top: 0.75rem;
+        font-size: 0.65rem;
+      }
+
+      .vital-item {
+        min-width: 0;
+        flex: 1;
+      }
+
+      .vital-value {
+        font-size: 0.9rem;
+      }
+
+      .error-label {
+        font-size: 0.7rem;
+        margin-top: 0.4rem;
+      }
+
+      .console-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+      }
+
+      .console-title {
+        font-size: 0.6rem;
+        letter-spacing: 1px;
+      }
+
+      .reveal-container {
+        padding: 0.5rem 0 1.5rem 0;
+      }
+
+      .reveal-name {
+        font-size: clamp(1.35rem, 6vw, 2.2rem);
+        line-height: 1.25;
+        margin-bottom: 0.35rem;
+      }
+
+      .reveal-subtitle {
+        font-size: clamp(0.85rem, 3.2vw, 0.95rem);
+        margin-bottom: 1rem;
+        line-height: 1.5;
+        padding: 0 0.25rem;
+      }
+
+      .reveal-message {
+        font-size: 0.85rem;
+        line-height: 1.6;
+        padding: 0;
+      }
+
+      .result-percent {
+        font-size: clamp(2.2rem, 9vw, 3.5rem);
+        margin: 0.25rem 0;
+      }
+
+      .scan-badge {
+        font-size: 0.65rem;
+        padding: 0.3rem 0.75rem;
+        margin-bottom: 0.75rem;
+      }
+
+      /* Dodging button on mobile stays within safe area */
+      .btn-no.dodging {
+        min-width: 80px;
+        min-height: 40px;
+        font-size: 0.85rem;
+        padding: 0.5rem 0.85rem;
+      }
+
+      #screen-reveal .glass-card {
+        margin-top: 1rem;
+        padding: 1.25rem 0.85rem;
+      }
+    }
+
+    /* ==========================================================================
+   ACCESSIBILITY — Reduced motion
+   ========================================================================== */
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
 </head>
@@ -1343,12 +1371,11 @@
 
       <p class="question-text">100% sure? Last chance! &#128156;</p>
 
-      <div class="btn-group" style="flex-direction: column; align-items: center;">
+      <div class="btn-group">
         <button class="btn btn-yes mega" id="yes-btn-3" onclick="goToScreen('screen-scan')">
           YES! Absolutely! &#10084;&#65039;
         </button>
-        <button class="btn btn-no" id="no-btn-3" style="font-size: 0.7rem; padding: 0.4rem 1rem; opacity: 0.5;"
-          onclick="dodgeButton(this)">no...</button>
+        <button class="btn btn-no" id="no-btn-3" onclick="dodgeButton(this)">no...</button>
       </div>
 
       <p class="error-label" id="error-3">&#9888; Mari adhe poyindhi kadhu </p>
