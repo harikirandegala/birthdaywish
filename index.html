@@ -4,6 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>Birthday Diagnostic Portal</title>
   <meta name="description" content="A cosmic love diagnostics birthday experience — space meets heartbeat meets love.">
 
@@ -854,16 +857,12 @@
    SCREEN-SPECIFIC OVERRIDES
    ========================================================================== */
 
-    /* Q3: Yes button proportional styling */
+    /* Q3: Yes button clean standard styling */
     #screen-q3 .btn-yes {
-      transition: all 0.35s ease;
-    }
-
-    #screen-q3 .btn-yes.mega {
-      padding: 1.1rem 2.2rem;
-      font-size: 1.25rem;
-      width: 100%;
-      max-width: 320px;
+      padding: 0.85rem 1.8rem;
+      font-size: 1rem;
+      width: auto;
+      max-width: 260px;
     }
 
     /* Q3: Tiny subtle no button */
@@ -1066,12 +1065,12 @@
         align-items: center;
       }
 
-      #screen-q3 .btn-yes.mega {
-        padding: 0.9rem 1.5rem;
-        font-size: 1.05rem;
+      #screen-q3 .btn-yes {
+        padding: 0.75rem 1.4rem;
+        font-size: 0.95rem;
         width: 100%;
-        max-width: 280px;
-        min-height: 48px;
+        max-width: 240px;
+        min-height: 44px;
       }
 
       #no-btn-3 {
@@ -1630,16 +1629,6 @@
 
       const screenEl = btn.closest('.screen') || (btn._originalParent ? btn._originalParent.closest('.screen') : null);
       const errorLabel = screenEl ? screenEl.querySelector('.error-label') : null;
-
-      // Make Q2 Yes button grow on each dodge
-      if (id === 'no-btn-2') {
-        const yesBtn = document.getElementById('yes-btn-2');
-        if (yesBtn) {
-          const scale = 1 + dodgeCounts[id] * 0.08;
-          yesBtn.style.transform = `scale(${Math.min(scale, 1.25)})`;
-          yesBtn.style.boxShadow = `0 6px ${15 + dodgeCounts[id] * 5}px var(--cyan-glow)`;
-        }
-      }
 
       // After MAX_DODGES: show error, hide button
       if (dodgeCounts[id] >= MAX_DODGES) {
