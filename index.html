@@ -501,6 +501,15 @@
       position: relative;
     }
 
+    /* Q3 screen: override btn-group layout */
+    #screen-q3 .btn-group {
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      min-height: unset;
+      margin-top: 1rem;
+    }
+
     .btn {
       padding: 0.85rem 2rem;
       border: none;
@@ -859,24 +868,24 @@
 
     /* Q3: Yes button — direct ID targeting for guaranteed specificity */
     #yes-btn-3 {
-      padding: 0.8rem 1.6rem !important;
-      font-size: 0.95rem !important;
+      padding: 0.7rem 1.5rem !important;
+      font-size: 0.9rem !important;
       width: auto !important;
-      max-width: 240px !important;
+      max-width: 220px !important;
       min-height: unset !important;
+      min-width: unset !important;
     }
 
-    /* Q3: Tiny subtle no button */
+    /* Q3: no button — tiny ghost style */
     #no-btn-3 {
-      min-width: unset;
-      min-height: unset;
-      padding: 0.35rem 0.85rem;
-      font-size: 0.75rem;
-      border: 1px dashed rgba(255, 45, 117, 0.3);
-      background: transparent;
-      opacity: 0.6;
-      margin-top: 0.35rem;
-      box-shadow: none;
+      min-width: unset !important;
+      min-height: unset !important;
+      padding: 0.3rem 0.8rem !important;
+      font-size: 0.72rem !important;
+      background: transparent !important;
+      border: 1px dashed rgba(255,45,117,0.3) !important;
+      box-shadow: none !important;
+      opacity: 0.55 !important;
     }
 
     #no-btn-3:hover {
