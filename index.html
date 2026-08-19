@@ -857,12 +857,13 @@
    SCREEN-SPECIFIC OVERRIDES
    ========================================================================== */
 
-    /* Q3: Yes button clean standard styling */
-    #screen-q3 .btn-yes {
-      padding: 0.85rem 1.8rem;
-      font-size: 1rem;
-      width: auto;
-      max-width: 260px;
+    /* Q3: Yes button — direct ID targeting for guaranteed specificity */
+    #yes-btn-3 {
+      padding: 0.8rem 1.6rem !important;
+      font-size: 0.95rem !important;
+      width: auto !important;
+      max-width: 240px !important;
+      min-height: unset !important;
     }
 
     /* Q3: Tiny subtle no button */
@@ -1370,8 +1371,8 @@
 
       <p class="question-text">100% sure? Last chance! &#128156;</p>
 
-      <div class="btn-group">
-        <button class="btn btn-yes mega" id="yes-btn-3" onclick="goToScreen('screen-scan')">
+      <div class="btn-group" style="flex-direction:column;align-items:center;gap:0.5rem;">
+        <button class="btn btn-yes" id="yes-btn-3" onclick="goToScreen('screen-scan')">
           YES! Absolutely! &#10084;&#65039;
         </button>
         <button class="btn btn-no" id="no-btn-3" onclick="dodgeButton(this)">no...</button>
