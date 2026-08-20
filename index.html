@@ -1043,6 +1043,16 @@
       pointer-events: none;
     }
 
+    #aurora-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
     .card-glare {
       position: absolute;
       inset: 0;
@@ -1163,6 +1173,149 @@
           border-color: var(--pink);
         }
       }
+
+      /* ---- FEATURE 4: Magnetic Button Hover ---- */
+      .btn.magnetic-hover {
+        transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
+      }
+
+      /* ---- FEATURE 5: Holographic Tooltip on Vital Items ---- */
+      .vital-item {
+        position: relative;
+        cursor: default;
+      }
+
+      .vital-tooltip {
+        position: absolute;
+        bottom: calc(100% + 12px);
+        left: 50%;
+        transform: translateX(-50%) translateY(6px) scale(0.95);
+        background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(255, 45, 117, 0.15));
+        border: 1px solid rgba(0, 229, 255, 0.3);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 10px;
+        padding: 0.55rem 0.85rem;
+        font-size: 0.68rem;
+        color: var(--text-primary);
+        white-space: nowrap;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 100;
+        box-shadow:
+          0 8px 32px rgba(0, 0, 0, 0.4),
+          0 0 15px rgba(0, 229, 255, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        letter-spacing: 0.5px;
+      }
+
+      .vital-tooltip::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 5px solid transparent;
+        border-top-color: rgba(0, 229, 255, 0.3);
+      }
+
+      .vital-tooltip .tooltip-bar {
+        display: block;
+        width: 100%;
+        height: 3px;
+        margin-top: 5px;
+        border-radius: 2px;
+        background: linear-gradient(90deg, var(--cyan), var(--pink));
+        animation: tooltipBarShimmer 2s ease-in-out infinite;
+      }
+
+      @keyframes tooltipBarShimmer {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 1; }
+      }
+
+      .vital-item:hover .vital-tooltip {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+      }
+
+      /* ---- FEATURE 6: Keyboard Shortcut HUD ---- */
+      .keyboard-hud {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9000;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+        pointer-events: none;
+      }
+
+      .keyboard-hud.visible {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+
+      .hud-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.65rem;
+        color: var(--text-muted);
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      .hud-key {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 24px;
+        height: 22px;
+        padding: 0 6px;
+        background: rgba(0, 229, 255, 0.1);
+        border: 1px solid rgba(0, 229, 255, 0.25);
+        border-radius: 5px;
+        font-size: 0.6rem;
+        font-weight: 700;
+        color: var(--cyan);
+        font-family: 'Segoe UI', monospace;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      }
+
+      .hud-key.pressed {
+        background: rgba(0, 229, 255, 0.3);
+        box-shadow: 0 0 12px var(--cyan-glow);
+        transform: scale(0.92);
+        transition: all 0.1s ease;
+      }
+
+      /* ---- FEATURE 7: Sound Visualizer Ring (Reveal Screen) ---- */
+      #visualizer-canvas {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 8;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 1s ease;
+      }
+
+      #visualizer-canvas.active {
+        opacity: 0.7;
+      }
+
+      /* ---- FEATURE 8: Parallax Depth Layer markers ---- */
+      .parallax-layer {
+        will-change: transform;
+        transition: transform 0.15s ease-out;
+      }
     }
 
     /* Mobile / Touch fallback — 100% hidden on mobile */
@@ -1171,7 +1324,11 @@
       .custom-cursor-ring,
       #cursor-sparks-canvas,
       #constellation-canvas,
-      .card-glare {
+      #aurora-canvas,
+      #visualizer-canvas,
+      .card-glare,
+      .keyboard-hud,
+      .vital-tooltip {
         display: none !important;
       }
     }
@@ -1203,12 +1360,25 @@
   <!-- Desktop-Exclusive: Interactive Constellation Canvas -->
   <canvas id="constellation-canvas"></canvas>
 
+  <!-- Desktop-Exclusive: Aurora Borealis Canvas -->
+  <canvas id="aurora-canvas"></canvas>
+
+  <!-- Desktop-Exclusive: Sound Visualizer Ring Canvas -->
+  <canvas id="visualizer-canvas"></canvas>
+
   <!-- Desktop-Exclusive: Cursor Sparkle Trail Canvas -->
   <canvas id="cursor-sparks-canvas"></canvas>
 
   <!-- Desktop-Exclusive: Custom Glowing Cursor Elements -->
   <div class="custom-cursor-dot" id="cursor-dot"></div>
   <div class="custom-cursor-ring" id="cursor-ring"></div>
+
+  <!-- Desktop-Exclusive: Keyboard Shortcut HUD -->
+  <div class="keyboard-hud" id="keyboard-hud">
+    <div class="hud-item"><span class="hud-key" id="hud-key-enter">↵</span> Next</div>
+    <div class="hud-item"><span class="hud-key" id="hud-key-space">⎵</span> Accept</div>
+    <div class="hud-item"><span class="hud-key" id="hud-key-h">H</span> Toggle HUD</div>
+  </div>
 
   <!-- ======================================================================
      SCREEN 1 — LANDING
@@ -1566,6 +1736,8 @@
           target.classList.add('active', 'warp-in');
           startConfetti();
           burstHearts();
+          // Desktop: Start sound visualizer ring
+          if (window._startVisualizer) window._startVisualizer();
         } else {
           target.classList.add('active');
         }
@@ -1945,6 +2117,12 @@
        1. Interactive Constellation Starfield Canvas (Hover & Connect)
        2. 3D Holographic Card Perspective Tilt with Specular Glare
        3. Custom Cosmic Love Cursor & Sparkle Particle Trail
+       4. Aurora Borealis animated background ribbons
+       5. Magnetic Button Hover attraction
+       6. Holographic Tooltips on vital items
+       7. Keyboard Shortcuts + HUD overlay
+       8. Parallax Depth Layers (mouse-driven)
+       9. Sound Visualizer Ring on reveal screen
        ========================================================================== */
     const isDesktopPointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches && !('ontouchstart' in window);
 
@@ -2307,6 +2485,312 @@
         window.addEventListener('resize', () => {
           sparksCanvas.width = window.innerWidth;
           sparksCanvas.height = window.innerHeight;
+        });
+      }
+
+      /* ------------------------------------------------------------------------
+         4. AURORA BOREALIS — Animated flowing ribbon lights
+         ------------------------------------------------------------------------ */
+      const auroraCanvas = document.getElementById('aurora-canvas');
+      const auroraCtx = auroraCanvas ? auroraCanvas.getContext('2d') : null;
+
+      if (auroraCanvas && auroraCtx) {
+        auroraCanvas.width = window.innerWidth;
+        auroraCanvas.height = window.innerHeight;
+
+        const ribbons = [];
+        const RIBBON_COUNT = 4;
+
+        for (let i = 0; i < RIBBON_COUNT; i++) {
+          ribbons.push({
+            y: auroraCanvas.height * (0.1 + i * 0.18),
+            amplitude: 30 + Math.random() * 50,
+            frequency: 0.002 + Math.random() * 0.003,
+            speed: 0.003 + Math.random() * 0.004,
+            phase: Math.random() * Math.PI * 2,
+            thickness: 60 + Math.random() * 80,
+            hue1: i % 2 === 0 ? [0, 229, 255] : [255, 45, 117],
+            hue2: i % 2 === 0 ? [100, 200, 255] : [255, 107, 157],
+            opacity: 0.025 + Math.random() * 0.02
+          });
+        }
+
+        let auroraTime = 0;
+        function animateAurora() {
+          auroraCtx.clearRect(0, 0, auroraCanvas.width, auroraCanvas.height);
+          auroraTime += 1;
+
+          for (const ribbon of ribbons) {
+            const gradient = auroraCtx.createLinearGradient(0, ribbon.y - ribbon.thickness, 0, ribbon.y + ribbon.thickness);
+            const [r1, g1, b1] = ribbon.hue1;
+            const [r2, g2, b2] = ribbon.hue2;
+            gradient.addColorStop(0, `rgba(${r1}, ${g1}, ${b1}, 0)`);
+            gradient.addColorStop(0.3, `rgba(${r1}, ${g1}, ${b1}, ${ribbon.opacity})`);
+            gradient.addColorStop(0.5, `rgba(${r2}, ${g2}, ${b2}, ${ribbon.opacity * 1.5})`);
+            gradient.addColorStop(0.7, `rgba(${r1}, ${g1}, ${b1}, ${ribbon.opacity})`);
+            gradient.addColorStop(1, `rgba(${r2}, ${g2}, ${b2}, 0)`);
+
+            auroraCtx.beginPath();
+            for (let x = 0; x <= auroraCanvas.width; x += 4) {
+              const waveY = ribbon.y + 
+                Math.sin(x * ribbon.frequency + auroraTime * ribbon.speed + ribbon.phase) * ribbon.amplitude +
+                Math.sin(x * ribbon.frequency * 2.3 + auroraTime * ribbon.speed * 0.7) * (ribbon.amplitude * 0.4);
+              if (x === 0) auroraCtx.moveTo(x, waveY);
+              else auroraCtx.lineTo(x, waveY);
+            }
+            // Complete the shape by closing bottom
+            auroraCtx.lineTo(auroraCanvas.width, auroraCanvas.height);
+            auroraCtx.lineTo(0, auroraCanvas.height);
+            auroraCtx.closePath();
+            auroraCtx.fillStyle = gradient;
+            auroraCtx.fill();
+          }
+
+          requestAnimationFrame(animateAurora);
+        }
+        animateAurora();
+
+        window.addEventListener('resize', () => {
+          auroraCanvas.width = window.innerWidth;
+          auroraCanvas.height = window.innerHeight;
+        });
+      }
+
+      /* ------------------------------------------------------------------------
+         5. MAGNETIC BUTTON HOVER — Buttons subtly attracted to cursor
+         ------------------------------------------------------------------------ */
+      document.querySelectorAll('.btn-yes, .btn-scan').forEach(btn => {
+        btn.classList.add('magnetic-hover');
+
+        btn.addEventListener('mousemove', (e) => {
+          const rect = btn.getBoundingClientRect();
+          const centerX = rect.left + rect.width / 2;
+          const centerY = rect.top + rect.height / 2;
+          const deltaX = e.clientX - centerX;
+          const deltaY = e.clientY - centerY;
+          const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+          const maxDist = 120;
+
+          if (distance < maxDist) {
+            const pull = (1 - distance / maxDist) * 0.4;
+            const moveX = deltaX * pull;
+            const moveY = deltaY * pull;
+            btn.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.05)`;
+            btn.style.boxShadow = `0 6px 30px var(--cyan-glow), 0 0 50px rgba(0, 229, 255, ${pull})`;
+          }
+        });
+
+        btn.addEventListener('mouseleave', () => {
+          btn.style.transform = '';
+          btn.style.boxShadow = '';
+        });
+      });
+
+      /* ------------------------------------------------------------------------
+         6. HOLOGRAPHIC TOOLTIPS — Inject tooltips on vital items
+         ------------------------------------------------------------------------ */
+      const tooltipData = {
+        'BPM': { text: '💓 Heart rate synced to your emotions', color: 'var(--cyan)' },
+        'O2': { text: '🫧 Oxygen saturation: Breathing easy', color: 'var(--cyan)' },
+        'LOVE': { text: '💕 Love index: Immeasurable ∞', color: 'var(--pink)' },
+        'STATUS': { text: '🔍 Emotional scanner: Fully operational', color: 'var(--cyan)' },
+        'EMOTION': { text: '💗 Positive emotional spike detected!', color: 'var(--pink)' },
+        'CONFIDENCE': { text: '✨ Confidence is at maximum capacity', color: 'var(--cyan)' },
+        'HEARTBEAT': { text: '💓 BPM accelerating — love detected', color: 'var(--pink)' },
+        'MATCH': { text: '🎯 Soul compatibility score', color: 'var(--cyan)' },
+        'UNDERSTANDING': { text: '🧬 Emotional resonance level', color: 'var(--pink)' },
+        'DESTINY': { text: '🌌 Cosmic alignment probability', color: 'var(--cyan)' },
+        'HATE LEVEL': { text: '🖤 Maximum hate = Maximum love!', color: 'var(--pink)' },
+        'BIRTHDAY': { text: '🎂 The most special day of the year!', color: 'var(--cyan)' },
+        'HAPPINESS': { text: '✨ Joy overflow detected ∞', color: 'var(--pink)' }
+      };
+
+      document.querySelectorAll('.vital-item').forEach(item => {
+        const label = item.querySelector('span:first-child');
+        if (label) {
+          const key = label.textContent.trim();
+          const data = tooltipData[key];
+          if (data) {
+            const tooltip = document.createElement('div');
+            tooltip.className = 'vital-tooltip';
+            tooltip.innerHTML = `${data.text}<span class="tooltip-bar"></span>`;
+            item.appendChild(tooltip);
+          }
+        }
+      });
+
+      /* ------------------------------------------------------------------------
+         7. KEYBOARD SHORTCUTS & HUD OVERLAY
+         ------------------------------------------------------------------------ */
+      const keyboardHud = document.getElementById('keyboard-hud');
+      let hudVisible = true;
+
+      // Show HUD after brief delay
+      setTimeout(() => {
+        if (keyboardHud) keyboardHud.classList.add('visible');
+      }, 2000);
+
+      document.addEventListener('keydown', (e) => {
+        const key = e.key.toLowerCase();
+
+        // Visual key press feedback
+        const keyMap = {
+          'enter': 'hud-key-enter',
+          ' ': 'hud-key-space',
+          'h': 'hud-key-h'
+        };
+        const hudKeyId = keyMap[key];
+        if (hudKeyId) {
+          const keyEl = document.getElementById(hudKeyId);
+          if (keyEl) {
+            keyEl.classList.add('pressed');
+            setTimeout(() => keyEl.classList.remove('pressed'), 200);
+          }
+        }
+
+        // Enter / Space → advance to next screen (click the Yes / Begin button)
+        if (key === 'enter' || key === ' ') {
+          e.preventDefault();
+          const activeScreen = document.querySelector('.screen.active');
+          if (activeScreen) {
+            const primaryBtn = activeScreen.querySelector('.btn-yes, .btn-scan');
+            if (primaryBtn) primaryBtn.click();
+          }
+        }
+
+        // H → toggle HUD visibility
+        if (key === 'h' && keyboardHud) {
+          hudVisible = !hudVisible;
+          keyboardHud.classList.toggle('visible', hudVisible);
+        }
+      });
+
+      /* ------------------------------------------------------------------------
+         8. PARALLAX DEPTH LAYERS — Mouse-driven subtle parallax
+         ------------------------------------------------------------------------ */
+      const planet1 = document.querySelector('.planet-1');
+      const planet2 = document.querySelector('.planet-2');
+      const nebulaDrift = document.querySelector('.nebula-drift');
+
+      if (planet1) planet1.classList.add('parallax-layer');
+      if (planet2) planet2.classList.add('parallax-layer');
+
+      let parallaxMouseX = 0, parallaxMouseY = 0;
+      let parallaxTargetX = 0, parallaxTargetY = 0;
+
+      window.addEventListener('mousemove', (e) => {
+        parallaxTargetX = (e.clientX / window.innerWidth - 0.5) * 2;
+        parallaxTargetY = (e.clientY / window.innerHeight - 0.5) * 2;
+      });
+
+      function animateParallax() {
+        parallaxMouseX += (parallaxTargetX - parallaxMouseX) * 0.06;
+        parallaxMouseY += (parallaxTargetY - parallaxMouseY) * 0.06;
+
+        if (planet1) {
+          planet1.style.transform = `translate(${parallaxMouseX * 25}px, ${parallaxMouseY * 15}px)`;
+        }
+        if (planet2) {
+          planet2.style.transform = `translate(${parallaxMouseX * -18}px, ${parallaxMouseY * -12}px)`;
+        }
+        if (nebulaDrift) {
+          nebulaDrift.style.transform = `translate(${parallaxMouseX * 8}px, ${parallaxMouseY * 6}px)`;
+        }
+
+        // Also subtly shift starfield layers
+        const starsSmEl = document.getElementById('stars-sm');
+        const starsMdEl = document.getElementById('stars-md');
+        const starsLgEl = document.getElementById('stars-lg');
+
+        if (starsSmEl) starsSmEl.style.transform = `translate(${parallaxMouseX * 3}px, ${parallaxMouseY * 2}px)`;
+        if (starsMdEl) starsMdEl.style.transform = `translate(${parallaxMouseX * 6}px, ${parallaxMouseY * 4}px)`;
+        if (starsLgEl) starsLgEl.style.transform = `translate(${parallaxMouseX * 10}px, ${parallaxMouseY * 7}px)`;
+
+        requestAnimationFrame(animateParallax);
+      }
+      animateParallax();
+
+      /* ------------------------------------------------------------------------
+         9. SOUND VISUALIZER RING — Fake audio-reactive ring on reveal
+         ------------------------------------------------------------------------ */
+      const vizCanvas = document.getElementById('visualizer-canvas');
+      const vizCtx = vizCanvas ? vizCanvas.getContext('2d') : null;
+
+      if (vizCanvas && vizCtx) {
+        vizCanvas.width = window.innerWidth;
+        vizCanvas.height = window.innerHeight;
+
+        let vizActive = false;
+        let vizTime = 0;
+        const BAR_COUNT = 64;
+
+        // Expose a function to start the visualizer when reveal screen appears
+        window._startVisualizer = function() {
+          if (vizActive) return;
+          vizActive = true;
+          vizCanvas.classList.add('active');
+          animateVisualizer();
+        };
+
+        function animateVisualizer() {
+          if (!vizActive) return;
+          vizCtx.clearRect(0, 0, vizCanvas.width, vizCanvas.height);
+          vizTime += 0.03;
+
+          const cx = vizCanvas.width / 2;
+          const cy = vizCanvas.height / 2;
+          const baseRadius = Math.min(cx, cy) * 0.3;
+
+          for (let i = 0; i < BAR_COUNT; i++) {
+            const angle = (Math.PI * 2 * i) / BAR_COUNT;
+
+            // Generate fake audio data using layered sine waves
+            const val = 
+              Math.sin(vizTime * 2.5 + i * 0.3) * 0.3 +
+              Math.sin(vizTime * 4.2 + i * 0.7) * 0.25 +
+              Math.sin(vizTime * 1.1 + i * 0.15) * 0.2 +
+              Math.sin(vizTime * 7.3 + i * 1.2) * 0.1 +
+              0.5;
+
+            const barLength = val * baseRadius * 0.6;
+
+            const x1 = cx + Math.cos(angle) * baseRadius;
+            const y1 = cy + Math.sin(angle) * baseRadius;
+            const x2 = cx + Math.cos(angle) * (baseRadius + barLength);
+            const y2 = cy + Math.sin(angle) * (baseRadius + barLength);
+
+            // Color interpolation based on bar position
+            const hueShift = (i / BAR_COUNT);
+            const r = Math.floor(0 + hueShift * 255);
+            const g = Math.floor(229 - hueShift * 184);
+            const b = Math.floor(255 - hueShift * 138);
+
+            vizCtx.beginPath();
+            vizCtx.moveTo(x1, y1);
+            vizCtx.lineTo(x2, y2);
+            vizCtx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${0.5 + val * 0.4})`;
+            vizCtx.lineWidth = 2.5;
+            vizCtx.lineCap = 'round';
+            vizCtx.shadowColor = `rgba(${r}, ${g}, ${b}, 0.6)`;
+            vizCtx.shadowBlur = 8;
+            vizCtx.stroke();
+          }
+
+          // Inner glowing circle
+          vizCtx.beginPath();
+          vizCtx.arc(cx, cy, baseRadius * 0.95, 0, Math.PI * 2);
+          vizCtx.strokeStyle = `rgba(0, 229, 255, ${0.15 + Math.sin(vizTime * 3) * 0.1})`;
+          vizCtx.lineWidth = 1.5;
+          vizCtx.shadowColor = '#00e5ff';
+          vizCtx.shadowBlur = 15;
+          vizCtx.stroke();
+
+          requestAnimationFrame(animateVisualizer);
+        }
+
+        window.addEventListener('resize', () => {
+          vizCanvas.width = window.innerWidth;
+          vizCanvas.height = window.innerHeight;
         });
       }
     }
