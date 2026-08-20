@@ -1240,60 +1240,6 @@
         transform: translateX(-50%) translateY(0) scale(1);
       }
 
-      /* ---- FEATURE 6: Keyboard Shortcut HUD ---- */
-      .keyboard-hud {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 9000;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        opacity: 0;
-        transform: translateY(10px);
-        transition: opacity 0.5s ease, transform 0.5s ease;
-        pointer-events: none;
-      }
-
-      .keyboard-hud.visible {
-        opacity: 1;
-        transform: translateY(0);
-        pointer-events: auto;
-      }
-
-      .hud-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.65rem;
-        color: var(--text-muted);
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-      }
-
-      .hud-key {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 24px;
-        height: 22px;
-        padding: 0 6px;
-        background: rgba(0, 229, 255, 0.1);
-        border: 1px solid rgba(0, 229, 255, 0.25);
-        border-radius: 5px;
-        font-size: 0.6rem;
-        font-weight: 700;
-        color: var(--cyan);
-        font-family: 'Segoe UI', monospace;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-      }
-
-      .hud-key.pressed {
-        background: rgba(0, 229, 255, 0.3);
-        box-shadow: 0 0 12px var(--cyan-glow);
-        transform: scale(0.92);
-        transition: all 0.1s ease;
-      }
 
       /* ---- FEATURE 7: Sound Visualizer Ring (Reveal Screen) ---- */
       #visualizer-canvas {
@@ -1327,7 +1273,6 @@
       #aurora-canvas,
       #visualizer-canvas,
       .card-glare,
-      .keyboard-hud,
       .vital-tooltip {
         display: none !important;
       }
@@ -1373,12 +1318,6 @@
   <div class="custom-cursor-dot" id="cursor-dot"></div>
   <div class="custom-cursor-ring" id="cursor-ring"></div>
 
-  <!-- Desktop-Exclusive: Keyboard Shortcut HUD -->
-  <div class="keyboard-hud" id="keyboard-hud">
-    <div class="hud-item"><span class="hud-key" id="hud-key-enter">↵</span> Next</div>
-    <div class="hud-item"><span class="hud-key" id="hud-key-space">⎵</span> Accept</div>
-    <div class="hud-item"><span class="hud-key" id="hud-key-h">H</span> Toggle HUD</div>
-  </div>
 
   <!-- ======================================================================
      SCREEN 1 — LANDING
@@ -2619,51 +2558,6 @@
         }
       });
 
-      /* ------------------------------------------------------------------------
-         7. KEYBOARD SHORTCUTS & HUD OVERLAY
-         ------------------------------------------------------------------------ */
-      const keyboardHud = document.getElementById('keyboard-hud');
-      let hudVisible = true;
-
-      // Show HUD after brief delay
-      setTimeout(() => {
-        if (keyboardHud) keyboardHud.classList.add('visible');
-      }, 2000);
-
-      document.addEventListener('keydown', (e) => {
-        const key = e.key.toLowerCase();
-
-        // Visual key press feedback
-        const keyMap = {
-          'enter': 'hud-key-enter',
-          ' ': 'hud-key-space',
-          'h': 'hud-key-h'
-        };
-        const hudKeyId = keyMap[key];
-        if (hudKeyId) {
-          const keyEl = document.getElementById(hudKeyId);
-          if (keyEl) {
-            keyEl.classList.add('pressed');
-            setTimeout(() => keyEl.classList.remove('pressed'), 200);
-          }
-        }
-
-        // Enter / Space → advance to next screen (click the Yes / Begin button)
-        if (key === 'enter' || key === ' ') {
-          e.preventDefault();
-          const activeScreen = document.querySelector('.screen.active');
-          if (activeScreen) {
-            const primaryBtn = activeScreen.querySelector('.btn-yes, .btn-scan');
-            if (primaryBtn) primaryBtn.click();
-          }
-        }
-
-        // H → toggle HUD visibility
-        if (key === 'h' && keyboardHud) {
-          hudVisible = !hudVisible;
-          keyboardHud.classList.toggle('visible', hudVisible);
-        }
-      });
 
       /* ------------------------------------------------------------------------
          8. PARALLAX DEPTH LAYERS — Mouse-driven subtle parallax
