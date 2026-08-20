@@ -2087,9 +2087,11 @@
           mouse.active = false;
         });
 
-        // Shockwave effect on click
+        // Shockwave effect on click (capped to prevent lag)
         const shockwaves = [];
+        const MAX_SHOCKWAVES = 3;
         window.addEventListener('click', (e) => {
+          if (shockwaves.length >= MAX_SHOCKWAVES) shockwaves.shift();
           shockwaves.push({
             x: e.clientX,
             y: e.clientY,
@@ -2320,8 +2322,16 @@
           document.body.classList.remove('cursor-active');
         });
 
-        // Click Ripple & Spark burst
+        // Click Ripple & Spark burst (throttled to prevent lag)
+        let lastClickTime = 0;
+        const CLICK_THROTTLE = 100;
+        const MAX_SPARK_PARTICLES = 80;
+
         window.addEventListener('click', (e) => {
+          const now = Date.now();
+          if (now - lastClickTime < CLICK_THROTTLE) return;
+          lastClickTime = now;
+
           const ripple = document.createElement('div');
           ripple.className = 'cursor-click-ripple';
           ripple.style.left = `${e.clientX}px`;
@@ -2329,9 +2339,12 @@
           document.body.appendChild(ripple);
           setTimeout(() => ripple.remove(), 600);
 
-          // Spawn burst of cosmic sparkles
-          for (let i = 0; i < 14; i++) {
-            const angle = (Math.PI * 2 * i) / 14;
+          // Cap total particles to prevent buildup
+          if (sparkParticles.length > MAX_SPARK_PARTICLES) return;
+
+          // Spawn burst of cosmic sparkles (reduced count)
+          for (let i = 0; i < 8; i++) {
+            const angle = (Math.PI * 2 * i) / 8;
             const speed = Math.random() * 3 + 2;
             sparkParticles.push({
               x: e.clientX,
@@ -2342,7 +2355,7 @@
               color: sparkColors[Math.floor(Math.random() * sparkColors.length)],
               size: Math.random() * 10 + 10,
               opacity: 1,
-              decay: 0.025,
+              decay: 0.035,
               rotation: Math.random() * 360,
               rotSpeed: (Math.random() - 0.5) * 12
             });
@@ -2378,8 +2391,6 @@
             sparksCtx.font = `${sp.size}px sans-serif`;
             sparksCtx.fillStyle = sp.color;
             sparksCtx.globalAlpha = sp.opacity;
-            sparksCtx.shadowColor = sp.color;
-            sparksCtx.shadowBlur = 8;
             sparksCtx.textAlign = 'center';
             sparksCtx.textBaseline = 'middle';
             sparksCtx.fillText(sp.char, 0, 0);
