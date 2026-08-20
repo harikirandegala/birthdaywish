@@ -1241,22 +1241,6 @@
       }
 
 
-      /* ---- FEATURE 7: Sound Visualizer Ring (Reveal Screen) ---- */
-      #visualizer-canvas {
-        position: fixed;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 8;
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 1s ease;
-      }
-
-      #visualizer-canvas.active {
-        opacity: 0.7;
-      }
-
       /* ---- FEATURE 8: Parallax Depth Layer markers ---- */
       .parallax-layer {
         will-change: transform;
@@ -1271,7 +1255,6 @@
       #cursor-sparks-canvas,
       #constellation-canvas,
       #aurora-canvas,
-      #visualizer-canvas,
       .card-glare,
       .vital-tooltip {
         display: none !important;
@@ -1308,8 +1291,6 @@
   <!-- Desktop-Exclusive: Aurora Borealis Canvas -->
   <canvas id="aurora-canvas"></canvas>
 
-  <!-- Desktop-Exclusive: Sound Visualizer Ring Canvas -->
-  <canvas id="visualizer-canvas"></canvas>
 
   <!-- Desktop-Exclusive: Cursor Sparkle Trail Canvas -->
   <canvas id="cursor-sparks-canvas"></canvas>
@@ -1675,8 +1656,6 @@
           target.classList.add('active', 'warp-in');
           startConfetti();
           burstHearts();
-          // Desktop: Start sound visualizer ring
-          if (window._startVisualizer) window._startVisualizer();
         } else {
           target.classList.add('active');
         }
@@ -2603,90 +2582,6 @@
         requestAnimationFrame(animateParallax);
       }
       animateParallax();
-
-      /* ------------------------------------------------------------------------
-         9. SOUND VISUALIZER RING — Fake audio-reactive ring on reveal
-         ------------------------------------------------------------------------ */
-      const vizCanvas = document.getElementById('visualizer-canvas');
-      const vizCtx = vizCanvas ? vizCanvas.getContext('2d') : null;
-
-      if (vizCanvas && vizCtx) {
-        vizCanvas.width = window.innerWidth;
-        vizCanvas.height = window.innerHeight;
-
-        let vizActive = false;
-        let vizTime = 0;
-        const BAR_COUNT = 64;
-
-        // Expose a function to start the visualizer when reveal screen appears
-        window._startVisualizer = function() {
-          if (vizActive) return;
-          vizActive = true;
-          vizCanvas.classList.add('active');
-          animateVisualizer();
-        };
-
-        function animateVisualizer() {
-          if (!vizActive) return;
-          vizCtx.clearRect(0, 0, vizCanvas.width, vizCanvas.height);
-          vizTime += 0.03;
-
-          const cx = vizCanvas.width / 2;
-          const cy = vizCanvas.height / 2;
-          const baseRadius = Math.min(cx, cy) * 0.3;
-
-          for (let i = 0; i < BAR_COUNT; i++) {
-            const angle = (Math.PI * 2 * i) / BAR_COUNT;
-
-            // Generate fake audio data using layered sine waves
-            const val = 
-              Math.sin(vizTime * 2.5 + i * 0.3) * 0.3 +
-              Math.sin(vizTime * 4.2 + i * 0.7) * 0.25 +
-              Math.sin(vizTime * 1.1 + i * 0.15) * 0.2 +
-              Math.sin(vizTime * 7.3 + i * 1.2) * 0.1 +
-              0.5;
-
-            const barLength = val * baseRadius * 0.6;
-
-            const x1 = cx + Math.cos(angle) * baseRadius;
-            const y1 = cy + Math.sin(angle) * baseRadius;
-            const x2 = cx + Math.cos(angle) * (baseRadius + barLength);
-            const y2 = cy + Math.sin(angle) * (baseRadius + barLength);
-
-            // Color interpolation based on bar position
-            const hueShift = (i / BAR_COUNT);
-            const r = Math.floor(0 + hueShift * 255);
-            const g = Math.floor(229 - hueShift * 184);
-            const b = Math.floor(255 - hueShift * 138);
-
-            vizCtx.beginPath();
-            vizCtx.moveTo(x1, y1);
-            vizCtx.lineTo(x2, y2);
-            vizCtx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${0.5 + val * 0.4})`;
-            vizCtx.lineWidth = 2.5;
-            vizCtx.lineCap = 'round';
-            vizCtx.shadowColor = `rgba(${r}, ${g}, ${b}, 0.6)`;
-            vizCtx.shadowBlur = 8;
-            vizCtx.stroke();
-          }
-
-          // Inner glowing circle
-          vizCtx.beginPath();
-          vizCtx.arc(cx, cy, baseRadius * 0.95, 0, Math.PI * 2);
-          vizCtx.strokeStyle = `rgba(0, 229, 255, ${0.15 + Math.sin(vizTime * 3) * 0.1})`;
-          vizCtx.lineWidth = 1.5;
-          vizCtx.shadowColor = '#00e5ff';
-          vizCtx.shadowBlur = 15;
-          vizCtx.stroke();
-
-          requestAnimationFrame(animateVisualizer);
-        }
-
-        window.addEventListener('resize', () => {
-          vizCanvas.width = window.innerWidth;
-          vizCanvas.height = window.innerHeight;
-        });
-      }
     }
 
   </script>
